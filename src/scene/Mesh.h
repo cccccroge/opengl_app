@@ -9,7 +9,7 @@
 #include <vector>
 
 
-class Shape	// TODO: move to renderer
+class Shape
 {
 public:
 	GLuint vao;			// vertex array object
@@ -30,17 +30,10 @@ public:
 	Mesh();
     Mesh(const char *obj_file, 
 		glm::vec3 pos = glm::vec3(0.0f, 0.0f, 0.0f));
-	void sendRendering();	// TODO: move to renderer
 	void bind();
-	void attachProgram(ShaderProgram &program);
 
-	inline ShaderProgram& getProgram() { return *m_program; }
 	inline Shape& getShape() { return m_shape; }
 
 private:
-    Shape m_shape;	// TODO: move to renderer
-	ShaderProgram *m_program;
-
-    std::vector<tinyobj::shape_t> shapes;
-	std::vector<tinyobj::material_t> materials;
+    Shape m_shape;
 };

@@ -10,8 +10,11 @@ Mesh::Mesh() : SceneObject(glm::vec3(0.0f, 0.0f, 0.0f))
 Mesh::Mesh(const char *obj_file, glm::vec3 pos) : SceneObject(pos), 
 	m_shape(Shape())
 {
+	// Load to tinyobj format
+	std::vector<tinyobj::shape_t> shapes;
+	std::vector<tinyobj::material_t> materials;
     std::string err;
-	tinyobj::LoadObj(this->shapes, this->materials, err, obj_file);
+	tinyobj::LoadObj(shapes, materials, err, obj_file);
 
 	if(err.size()>0)
 	{
@@ -20,11 +23,8 @@ Mesh::Mesh(const char *obj_file, glm::vec3 pos) : SceneObject(pos),
 	}
 	
 	printf("Load Models Success ! Shapes size %d Maerial size %d\n", shapes.size(), materials.size());
-}
 
-
-void Mesh::sendRendering()
-{
+	// Setup vertex specification
 	for(int i = 0; i < shapes.size(); i++)
 	{
 		glGenVertexArrays(1, &m_shape.vao);
@@ -58,11 +58,10 @@ void Mesh::sendRendering()
 		glEnableVertexAttribArray(2);
 	}
 
-	texture_data tdata = load_png("assets/myManDiffuse.png");
+	texture_data tdata = load_png("assets/myManDiffuse.png");	// TODO: add texture path
 
 	glGenTextures( 1, &m_shape.m_texture );
 	glBindTexture( GL_TEXTURE_2D, m_shape.m_texture);
-
 
 	glTexImage2D( GL_TEXTURE_2D, 0, GL_RGBA32F, tdata.width, tdata.height, 0, GL_RGBA, GL_UNSIGNED_BYTE, tdata.data);
 	glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE );
@@ -71,16 +70,11 @@ void Mesh::sendRendering()
 	glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR );
 }
 
-
 void Mesh::bind()
 {
 	glBindVertexArray(m_shape.vao);
 }
 
 
-void Mesh::attachProgram(ShaderProgram &program)
-{
-	m_program = &program;
-}
 
 

@@ -28,7 +28,7 @@ namespace global
     extern Mesh *Leg_L2;
 
     extern Camera cameraPersp;
-    extern Renderer renderer;
+    extern Renderer *renderer;
 
     extern float renderWidth;
     extern float renderHeight;

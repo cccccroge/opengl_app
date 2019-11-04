@@ -1,9 +1,10 @@
 #include "Renderer.h"
 #include "freeGLUT/freeglut.h"
 #include "../utils.h"
+#include "../global.h"
+#include <iostream>
 
-
-Renderer::Renderer()
+Renderer::Renderer() : m_camera(NULL)
 {
     glClearColor(0.5f, 0.5f, 0.5f, 1.0f);
 	glEnable(GL_DEPTH_TEST);
@@ -34,15 +35,15 @@ void Renderer::RenderAll()
     // Clear display buffer
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    for (auto meshPtr : mesh_vec) {
-        // bind program
-		(*meshPtr).getProgram().bind();
+    // Bind Program
+    global::program->bind();
 
+    for (auto meshPtr : mesh_vec) {
         // change MVP in program
         glm::mat4 model = (*meshPtr).getModelMat();
         glm::mat4 view = (*m_camera).getViewMat();
         glm::mat4 proj = (*m_camera).getProjMat();
-        (*meshPtr).getProgram().setUniformMat4("um4mvp", proj * view * model);
+        global::program->setUniformMat4("um4mvp", proj * view * model);
 
         // bind object
         (*meshPtr).bind();

@@ -40,7 +40,7 @@ void onMenuTriggered(int id)
 // GLUT callback. Called to draw the scene.
 void onDisplayRefresh(void)
 {
-	global::renderer.RenderAll();
+	global::renderer->RenderAll();
 }
 
 

@@ -22,7 +22,7 @@ public:
     inline glm::mat4 getOriginal() { return original; }
 
 private:
-    glm::mat4 original;
+    glm::mat4 original; // TODO: maybe split to world and local space?
     glm::mat4 translation;
     glm::mat4 rotation;
     glm::mat4 scaling;
