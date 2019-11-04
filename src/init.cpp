@@ -10,7 +10,7 @@ int initGlutContext(int argc, char *argv[])
 	glutInitContextProfile(GLUT_CORE_PROFILE);
 	glutInit(&argc, argv);
 
-    glutInitDisplayMode(GLUT_RGBA | GLUT_DOUBLE | GLUT_DEPTH);
+    glutInitDisplayMode(GLUT_RGBA | GLUT_DOUBLE | GLUT_DEPTH | GLUT_MULTISAMPLE);
 	int mainwindow_width = 1024;
 	int mainwindow_height = 576;
 	int center_x = (glutGet(GLUT_SCREEN_WIDTH) - mainwindow_width) / 2;
@@ -60,4 +60,5 @@ void registerCallbacks(void)
 	glutSpecialFunc(onSpecialkeysPressed);
 	glutCloseFunc(onWindowClosed);
 	glutMouseFunc(onMousePressed);
+	glutMouseWheelFunc(onMouseWheelSpinned);
 }

@@ -2,6 +2,6 @@
 
 /* global variables definition (temporarily) */
 GlutTimer global::timer = GlutTimer(16);
-Camera global::cameraPersp = Camera();
+Camera global::camViewport = Camera();
 float global::renderWidth = 0;
 float global::renderHeight = 0;

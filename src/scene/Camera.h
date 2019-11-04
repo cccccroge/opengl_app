@@ -23,6 +23,10 @@ public:
 
     glm::mat4 getViewMat();
     glm::mat4 getProjMat();
+    glm::vec3 getDirection();
+
+    inline glm::vec3 getLookPos() { return lookPos; }
+    inline void setLookPos(glm::vec3 pos) { lookPos = pos; }
 
 private:
     PROJECTION_TYPE proj_type;
@@ -40,4 +44,5 @@ private:
     float right;
     float bottom;
     float top;
+
 };

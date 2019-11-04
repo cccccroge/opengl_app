@@ -15,6 +15,8 @@ public:
     void addMesh(Mesh &mesh);
     void RenderAll();
 
+    inline Camera* getCamera() { return m_camera; }
+
 private:
     Camera *m_camera;
     std::vector<Mesh *> mesh_vec;

@@ -14,7 +14,7 @@ Shader::Shader(GLuint type, const std::string glsl_file) : status(false),
 
     glShaderSource(id, 1, &src_cstr, NULL);
     glCompileShader(id);
-    std::cout << "validating:" << type << std::endl;
+    std::cout << "validating shader:" << type << std::endl;
     validate();
 }
 

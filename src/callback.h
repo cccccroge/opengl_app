@@ -9,3 +9,4 @@ void onKeyboardPressed(unsigned char key, int x, int y);
 void onSpecialkeysPressed(int key, int x, int y);
 void onMousePressed(int button, int state, int x, int y);
 void onWindowClosed(void);
+void onMouseWheelSpinned(int wheel, int direciton, int x, int y);

@@ -58,8 +58,6 @@ void onKeyboardPressed(unsigned char key, int x, int y)
 	if (!GlutTimer::enabled)
 		return;
 
-	//printf("Key %c is pressed at (%d, %d)\n", key, x, y);
-
 	switch(key) {
 		case 'd':
 		global::Torso->translate(0.5f, 0.0f, 0.0f);
@@ -106,12 +104,7 @@ void onSpecialkeysPressed(int key, int x, int y)
 	case GLUT_KEY_F1:
 		printf("F1 is pressed at (%d, %d)\n", x, y);
 		break;
-	case GLUT_KEY_PAGE_UP:
-		printf("Page up is pressed at (%d, %d)\n", x, y);
-		break;
-	case GLUT_KEY_LEFT:
-		printf("Left arrow is pressed at (%d, %d)\n", x, y);
-		break;
+
 	default:
 		printf("Other special key is pressed at (%d, %d)\n", x, y);
 		break;
@@ -141,4 +134,20 @@ void onMousePressed(int button, int state, int x, int y)
 void onWindowClosed(void)
 {
 	exitProgram();
+}
+
+
+void onMouseWheelSpinned(int wheel, int direction, int x, int y)
+{
+	if (wheel != 0) {
+		std::cout << "spinning non-default wheel!" << std::endl;
+		return;
+	}
+
+	// move camera toward its face direction
+	Camera* cam = global::renderer->getCamera();
+	glm::vec3 dir = (float)direction * cam->getDirection();
+	glm::vec3 mov = SCALE_SENSITIVITY * dir;
+	cam->translate(mov[0], mov[1], mov[2]);
+	cam->setLookPos(cam->getLookPos() + mov);	// update cam's lookPos
 }

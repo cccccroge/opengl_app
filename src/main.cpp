@@ -89,7 +89,7 @@ void setupRendering()
 	global::Arm_R2->rotate(45, std::vector<float>({ 1.0f, 0.0f, 0.0f }));
 
 	// setup camera
-	global::cameraPersp = Camera(PROJECTION_TYPE::PERSPECTIVE, 
+	global::camViewport = Camera(PROJECTION_TYPE::PERSPECTIVE, 
 		std::vector<float>({ 0.1f, 1000.0f }), glm::vec3(-5.0f, 10.0f, -10.0f), 
 		glm::vec3(0.0f, 5.0f, 0.0f), 60.0f);
 
@@ -106,7 +106,7 @@ void setupRendering()
 	global::renderer->addMesh(*global::Torso);
 	global::renderer->addMesh(*global::Head);
 	
-	global::renderer->setCamera(global::cameraPersp);
+	global::renderer->setCamera(global::camViewport);
 
 	printGLError();
 }

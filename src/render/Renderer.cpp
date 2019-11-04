@@ -9,6 +9,7 @@ Renderer::Renderer() : m_camera(NULL)
     glClearColor(0.5f, 0.5f, 0.5f, 1.0f);
 	glEnable(GL_DEPTH_TEST);
 	glDepthFunc(GL_LEQUAL);
+    glEnable(GL_MULTISAMPLE);
 }
 
 

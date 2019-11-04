@@ -29,8 +29,8 @@ Camera::Camera(PROJECTION_TYPE type, std::vector<float> boundary,
 
 glm::mat4 Camera::getViewMat()
 {
-    glm::mat4 ori = getOriginal();
-    glm::vec3 pos(ori[3][0], ori[3][1], ori[3][2]);
+    glm::mat4 posMat = getTranslation() * getOriginal();
+    glm::vec3 pos(posMat[3][0], posMat[3][1], posMat[3][2]);
     return glm::lookAt(pos, lookPos, UP_VECTOR);
 }
 
@@ -49,4 +49,14 @@ glm::mat4 Camera::getProjMat()
         return glm::mat4(1.0f);
     }
 }
+
+
+glm::vec3 Camera::getDirection()
+{
+    glm::mat4 posMat = getTranslation() * getOriginal();
+    glm::vec3 pos = glm::vec3(posMat[3][0], posMat[3][1], posMat[3][2]);
+    
+    return glm::normalize(lookPos - pos);
+}
+
 

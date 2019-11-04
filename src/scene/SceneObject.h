@@ -20,6 +20,7 @@ public:
     void clearParent();
 
     inline glm::mat4 getOriginal() { return original; }
+    inline glm::mat4 getTranslation() { return translation; }
 
 private:
     glm::mat4 original; // TODO: maybe split to world and local space?

@@ -17,8 +17,8 @@
 #define MENU_SUPERMAN 5
 
 #define UP_VECTOR glm::vec3(0.0f, 1.0f, 0.0f)   // Y is up, consistent with OpenGL
-
-
+    // TODO: make other vectors too, and replace somewhere else code
+#define SCALE_SENSITIVITY 1.25f
 
 /* --------------------------------------------------------------------
  * initGlutContext
