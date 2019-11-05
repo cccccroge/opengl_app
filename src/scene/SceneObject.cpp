@@ -35,6 +35,12 @@ void SceneObject::translate(float x, float y, float z)
 }
 
 
+void SceneObject::translate(glm::vec3 vec)
+{
+	translation = glm::translate(translation, vec);
+}
+
+
 void SceneObject::rotate(float deg, std::vector<float> axis)
 {
 	glm::vec3 axis_normalized = 

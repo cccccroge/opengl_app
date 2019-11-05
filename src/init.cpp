@@ -56,9 +56,17 @@ void registerCallbacks(void)
 {
 	glutDisplayFunc(onDisplayRefresh);
 	glutReshapeFunc(onWindowReshaped);
-	glutKeyboardFunc(onKeyboardPressed);
-	glutSpecialFunc(onSpecialkeysPressed);
 	glutCloseFunc(onWindowClosed);
+
+	glutKeyboardFunc(onKeyboardPressed);
+	glutKeyboardUpFunc(onKeyboardReleased);
+	glutSpecialFunc(onSpecialkeysPressed);
+	glutSpecialUpFunc(onSpecialkeysReleased);
+	
 	glutMouseFunc(onMousePressed);
 	glutMouseWheelFunc(onMouseWheelSpinned);
+	glutMotionFunc(onMouseMoved);
+	glutPassiveMotionFunc(onMouseMoved);
+
+	//glutSetKeyRepeat(GLUT_KEY_REPEAT_OFF);	// set key repeat
 }

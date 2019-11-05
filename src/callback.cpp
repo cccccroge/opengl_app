@@ -8,8 +8,22 @@
 #include "GLM/glm_996/gtc/type_ptr.hpp"
 
 #include <iostream>
+#include <map>
 #include "global.h"
 #include "scene/Mesh.h"
+
+
+// keyboard/mouse status record
+std::map<std::string, bool> KEYS_PRESSED;
+struct _MOUSE_POS
+{
+	int x;
+	int y;
+
+} MOUSE_POS;
+
+// flag helper
+bool shifted = false;	// whether mouse movement is shifted by program
 
 
 void onMenuTriggered(int id)
@@ -55,9 +69,6 @@ void onWindowReshaped(int width, int height)
 
 void onKeyboardPressed(unsigned char key, int x, int y)
 {
-	if (!GlutTimer::enabled)
-		return;
-
 	switch(key) {
 		case 'd':
 		global::Torso->translate(0.5f, 0.0f, 0.0f);
@@ -94,40 +105,107 @@ void onKeyboardPressed(unsigned char key, int x, int y)
 }
 
 
-void onSpecialkeysPressed(int key, int x, int y)
+void onKeyboardReleased(unsigned char key, int x, int y)
 {
-	if (!GlutTimer::enabled)
-		return;
-
 	switch(key)
 	{
-	case GLUT_KEY_F1:
-		printf("F1 is pressed at (%d, %d)\n", x, y);
-		break;
+		default:
+			std::cout << "some keys pressed" << std::endl;
+			break;
+	}
+}
 
-	default:
-		printf("Other special key is pressed at (%d, %d)\n", x, y);
-		break;
+
+void onSpecialkeysPressed(int key, int x, int y)
+{
+	switch(key)
+	{
+		case GLUT_KEY_SHIFT_L:
+		case GLUT_KEY_SHIFT_R:
+			KEYS_PRESSED["shift"] = true;
+			break;
+
+		default:
+			std::cout << "special keys pressed" << std::endl;
+			break;
+	}
+}
+
+
+void onSpecialkeysReleased(int key, int x, int y)
+{
+	switch(key)
+	{
+		case GLUT_KEY_SHIFT_L:
+		case GLUT_KEY_SHIFT_R:
+			KEYS_PRESSED["shift"] = false;
+			break;
+
+		default:
+			std::cout << "special keys released" << std::endl;
+			break;
 	}
 }
 
 
 void onMousePressed(int button, int state, int x, int y)
 {
-	if (!GlutTimer::enabled)
-		return;
-		
-	if (button == GLUT_LEFT_BUTTON)
-	{
-		if (state == GLUT_DOWN)
-		{
-			printf("Mouse %d is pressed at (%d, %d)\n", button, x, y);
-		}
-		else if (state == GLUT_UP)
-		{
-			printf("Mouse %d is released at (%d, %d)\n", button, x, y);
+	if (state == GLUT_DOWN) {
+		switch (button) {
+			case GLUT_MIDDLE_BUTTON:
+				KEYS_PRESSED["mouse_mid"] = true;
+				// update position
+				MOUSE_POS.x = x;
+				MOUSE_POS.y = y;
+				break;
+			
+			default:
+				break;
 		}
 	}
+
+	else if (state == GLUT_UP) {
+		switch (button) {
+			case GLUT_MIDDLE_BUTTON:
+				KEYS_PRESSED["mouse_mid"] = false;
+				break;
+			
+			default:
+				break;
+		}
+	}	
+}
+
+
+void onMouseMoved(int x, int y)
+{
+	if (KEYS_PRESSED["shift"] && KEYS_PRESSED["mouse_mid"]) {
+/* 		if (shifted) {
+			// ignore and flip
+			shifted = false;
+			return;
+		} */
+
+		// calculate movement
+		int dx = x - MOUSE_POS.x;
+		int dy = y - MOUSE_POS.y;
+
+		// get pan direction
+		glm::vec3 right = glm::normalize(
+			glm::cross(global::camViewport.getDirection(), UP_VECTOR));
+		glm::vec3 down = glm::normalize(
+			glm::cross(global::camViewport.getDirection(), right));
+
+		// move
+		glm::vec3 movement = -PAN_SENSITIVITY * ((float)dx * right + (float)dy * down);
+		global::camViewport.translate(movement);
+		global::camViewport.setLookPos(global::camViewport.getLookPos() + movement);
+
+		// update position
+		MOUSE_POS.x = x;
+		MOUSE_POS.y = y;
+	}
+	
 }
 
 
@@ -144,10 +222,5 @@ void onMouseWheelSpinned(int wheel, int direction, int x, int y)
 		return;
 	}
 
-	// move camera toward its face direction
-	Camera* cam = global::renderer->getCamera();
-	glm::vec3 dir = (float)direction * cam->getDirection();
-	glm::vec3 mov = SCALE_SENSITIVITY * dir;
-	cam->translate(mov[0], mov[1], mov[2]);
-	cam->setLookPos(cam->getLookPos() + mov);	// update cam's lookPos
+	global::camViewport.zoom(direction);
 }

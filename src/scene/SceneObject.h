@@ -12,6 +12,7 @@ public:
 	glm::mat4 getModelMat();
 
 	void translate(float x, float y, float z);
+    void translate(glm::vec3 vec);
 	void rotate(float deg, std::vector<float> axis);
 	void scale(float x, float y, float z);
     void resetTransformation();

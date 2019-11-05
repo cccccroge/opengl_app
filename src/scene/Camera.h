@@ -20,6 +20,7 @@ public:
         glm::vec3 pos = glm::vec3(0.0f, 0.0f, 0.0f), 
         glm::vec3 lookPos = glm::vec3(0.0f, 0.0f, 0.0f), 
         float fov = glm::radians(60.0f));
+    void zoom(int direction);
 
     glm::mat4 getViewMat();
     glm::mat4 getProjMat();

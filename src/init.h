@@ -19,6 +19,7 @@
 #define UP_VECTOR glm::vec3(0.0f, 1.0f, 0.0f)   // Y is up, consistent with OpenGL
     // TODO: make other vectors too, and replace somewhere else code
 #define SCALE_SENSITIVITY 1.25f
+#define PAN_SENSITIVITY 0.05f
 
 /* --------------------------------------------------------------------
  * initGlutContext
@@ -67,6 +68,10 @@ void createMenu(void);
  * Not all callback functions are included in this function. Sometimes
  * we need to register callback not only once to achieve some
  * functionalities. (eg. global timer)
+ * 
+ * Mouse moving callback function is registered in two cases:
+ * glutMotionFunc and glutPassiveMotionFunc to ignore the seperation
+ * when GLUT handling the mouse motion.
  * 
  * */
 void registerCallbacks(void);

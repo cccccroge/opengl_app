@@ -27,6 +27,16 @@ Camera::Camera(PROJECTION_TYPE type, std::vector<float> boundary,
 }
 
 
+void Camera::zoom(int direction)
+{
+    // move camera toward its face direction
+	glm::vec3 dir = (float)direction * getDirection();
+	glm::vec3 mov = SCALE_SENSITIVITY * dir;
+	translate(mov[0], mov[1], mov[2]);
+	setLookPos(getLookPos() + mov);	// update cam's lookPos
+}
+
+
 glm::mat4 Camera::getViewMat()
 {
     glm::mat4 posMat = getTranslation() * getOriginal();
