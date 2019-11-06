@@ -37,6 +37,21 @@ void Camera::zoom(int direction)
 }
 
 
+void Camera::pan(int xRight, int yDown)
+{
+    // move camera toward the vectors orthogonal to its face direction
+    glm::vec3 right = glm::normalize(
+        glm::cross(getDirection(), UP_VECTOR));
+    glm::vec3 down = glm::normalize(
+        glm::cross(getDirection(), right));
+
+    glm::vec3 movement = -PAN_SENSITIVITY * 
+        ((float)xRight * right + (float)yDown * down);
+    translate(movement);
+    setLookPos(getLookPos() + movement);	// update cam's lookPos
+}
+
+
 glm::mat4 Camera::getViewMat()
 {
     glm::mat4 posMat = getTranslation() * getOriginal();

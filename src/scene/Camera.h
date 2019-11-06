@@ -21,6 +21,7 @@ public:
         glm::vec3 lookPos = glm::vec3(0.0f, 0.0f, 0.0f), 
         float fov = glm::radians(60.0f));
     void zoom(int direction);
+    void pan(int xRight, int yDown);
 
     glm::mat4 getViewMat();
     glm::mat4 getProjMat();

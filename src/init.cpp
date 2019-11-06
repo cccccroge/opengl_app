@@ -1,7 +1,7 @@
 #include "GLEW/glew.h"
 #include "init.h"
 #include "freeGLUT/freeglut.h"
-#include "callback.h"
+#include "event/callback.h"
 #include <iostream>
 
 int initGlutContext(int argc, char *argv[])

@@ -6,6 +6,7 @@ BIN		:= bin
 SRC		:= src
 RENDER  := src/render
 SCENE   := src/scene
+EVENT	:= src/event
 
 INCLUDE	:= include
 LIB     := lib
@@ -20,7 +21,7 @@ run: clean all
 	clear
 	./$(BIN)/$(EXECUTABLE)
 
-$(BIN)/$(EXECUTABLE): $(SRC)/*.cpp $(RENDER)/*.cpp $(SCENE)/*.cpp
+$(BIN)/$(EXECUTABLE): $(SRC)/*.cpp $(RENDER)/*.cpp $(SCENE)/*.cpp $(EVENT)/*.cpp
 	$(CXX) $(CXX_FLAGS) -I$(INCLUDE) -L$(LIB) $^ -o $@ $(LIBRARIES)
 
 clean:
