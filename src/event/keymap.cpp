@@ -2,15 +2,15 @@
 #include <iostream>
 
 
-std::map<TOOL_MODE, std::pair<std::set<std::string>, std::string> > keyMap = {
+std::map< std::pair<std::set<std::string>, std::string>, TOOL_MODE > keyMap = {
         { 
-            TOOL_MODE::PAN, { { "shift_L" }, "mouse_M" }
+            { { "shift_L" }, "mouse_M" }, TOOL_MODE::PAN
         },
         { 
-            TOOL_MODE::ORBIT, { std::set<std::string>(), "mouse_M" }
+            { std::set<std::string>(), "mouse_M" }, TOOL_MODE::ORBIT
         },
         /*{
-             TOOL_MODE::ZOOM, { {?} } // ignore, GLUT treat mouse wheel as seperated callback
+            { {?} }, TOOL_MODE::ZOOM  // ignore, GLUT treat mouse wheel as seperated callback
         },*/
     };
 

@@ -16,8 +16,8 @@
 
 
 // keyboard/mouse status record
-std::map<std::string, bool> KEYS_PRESSED;
-std::set<std::string> pressedKeySet;
+std::map<std::string, bool> btnsPressed;
+std::set<std::string> pressedBtnSet;
 
 struct _MOUSE_POS
 {
@@ -73,8 +73,13 @@ void onWindowReshaped(int width, int height)
 void onKeyboardPressed(unsigned char key, int x, int y)
 {
 	std::string keyStr(1, key);
-	if (!KEYS_PRESSED[keyStr]) {
-		pressedKeySet.insert(keyStr);
+	if (!btnsPressed[keyStr]) {
+		pressedBtnSet.insert(keyStr);
+		std::cout << "set: ";
+		for (auto str : pressedBtnSet) {
+			std::cout << str << " ";
+		}
+		std::cout << std::endl;
 		checkTool(keyStr);
 	}
 	
@@ -121,7 +126,12 @@ void onKeyboardPressed(unsigned char key, int x, int y)
 void onKeyboardReleased(unsigned char key, int x, int y)
 {
 	std::string keyStr(1, key);
-	pressedKeySet.erase(keyStr);
+	pressedBtnSet.erase(keyStr);
+	std::cout << "set: ";
+	for (auto str : pressedBtnSet) {
+		std::cout << str << " ";
+	}
+	std::cout << std::endl;
 	
 	switch(key)
 	{
@@ -160,8 +170,13 @@ void onKeyboardReleased(unsigned char key, int x, int y)
 void onSpecialkeysPressed(int key, int x, int y)
 {
 	std::string keyStr = btn2str(key);
-	if (!KEYS_PRESSED[keyStr]) {
-		pressedKeySet.insert(keyStr);
+	if (!btnsPressed[keyStr]) {
+		pressedBtnSet.insert(keyStr);
+		std::cout << "set: ";
+		for (auto str : pressedBtnSet) {
+			std::cout << str << " ";
+		}
+		std::cout << std::endl;
 		checkTool(keyStr);
 	}
 
@@ -177,7 +192,12 @@ void onSpecialkeysPressed(int key, int x, int y)
 void onSpecialkeysReleased(int key, int x, int y)
 {
 	std::string keyStr = btn2str(key);
-	pressedKeySet.erase(keyStr);
+	pressedBtnSet.erase(keyStr);
+	std::cout << "set: ";
+	for (auto str : pressedBtnSet) {
+		std::cout << str << " ";
+	}
+	std::cout << std::endl;
 
 	switch(key)
 	{
@@ -193,8 +213,13 @@ void onMousePressed(int button, int state, int x, int y)
 	if (state == GLUT_DOWN) {
 
 		std::string keyStr = btn2str(button);
-		if (!KEYS_PRESSED[keyStr]) {
-			pressedKeySet.insert(keyStr);
+		if (!btnsPressed[keyStr]) {
+			pressedBtnSet.insert(keyStr);
+			std::cout << "set: ";
+			for (auto str : pressedBtnSet) {
+				std::cout << str << " ";
+			}
+			std::cout << std::endl;
 			checkTool(keyStr);
 		}
 
@@ -208,7 +233,12 @@ void onMousePressed(int button, int state, int x, int y)
 	else if (state == GLUT_UP) {
 
 		std::string keyStr = btn2str(button);
-		pressedKeySet.erase(keyStr);
+		pressedBtnSet.erase(keyStr);
+		std::cout << "set: ";
+		for (auto str : pressedBtnSet) {
+			std::cout << str << " ";
+		}
+		std::cout << std::endl;
 
 		checkTool("");
 	}	
@@ -256,31 +286,18 @@ bool checkTool(std::string last)
 {
 	// deactivate
 	if (last == "") {
-		TOOL_MODE toolMode = TOOL_MODE::NONE;
+		toolMode = TOOL_MODE::NONE;
 		return false;
 	}
 
-
 	// activate if find
-	std::set<std::string> current = pressedKeySet;
-	current.erase(last);
+	std::set<std::string> exceptLast = pressedBtnSet;
+	exceptLast.erase(last);
+	std::pair<std::set<std::string>, std::string> currentPair = { exceptLast, last };
 
-	if (current.size() != 0) {	// has pressed button set
-		for (auto pair : keyMap) {
-			if (pair.second.first == current && 
-				pair.second.second == last) {
-				toolMode = pair.first;
-				return true;
-			}
-		}
-	}
-	else {
-		for (auto pair : keyMap) {	// only has acitave button
-			if (pair.second.second == last) {
-				toolMode = pair.first;
-				return true;
-			}
-		}
+	if (keyMap.find(currentPair) != keyMap.end()) {
+		toolMode = keyMap[currentPair];
+		return true;
 	}
 	
 	// nothing match

@@ -13,8 +13,8 @@ enum class TOOL_MODE {
 	ORBIT
 };
 
-/* map [TOOL_MODE] to [Pair], each pair has a pressed button set
+/* map [Pair] to [TOOL_MODE] , each pair has a pressed button set
    and an activate button */
-extern std::map<TOOL_MODE, std::pair<std::set<std::string>, std::string> > keyMap;
+extern std::map< std::pair<std::set<std::string>, std::string>, TOOL_MODE > keyMap;
 
 std::string btn2str(int GLUT_BUTTON);
