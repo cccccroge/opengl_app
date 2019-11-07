@@ -20,6 +20,8 @@
     // TODO: make other vectors too, and replace somewhere else code
 #define SCALE_SENSITIVITY 1.25f
 #define PAN_SENSITIVITY 0.05f
+#define ORBIT_SENSITIVITY 0.5f
+#define ORBIT_DISTANCE 10.0f
 
 /* --------------------------------------------------------------------
  * initGlutContext

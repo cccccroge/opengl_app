@@ -41,35 +41,35 @@ void setupRendering()
 	global::program->compile();
    
 	// setup meshes
-	global::Torso = new Mesh("assets/Torso.obj", 
-		glm::vec3(0.0f, 2.7361f, 0.0f));	// global pos, copy from blender
+	global::Torso = new Mesh("assets/Torso.obj");
+	global::Torso->translate(glm::vec3(0.0f, 2.7361f, 0.0f));	// global pos, copy from blender
 
-	global::Head = new Mesh("assets/Head.obj",
-		glm::vec3(0.0f, 5.1385f, 0.0f));
+	global::Head = new Mesh("assets/Head.obj");
+	global::Head->translate(glm::vec3(0.0f, 5.1385f, 0.0f));
 
-	global::Arm_R1 = new Mesh("assets/Arm_R1.obj", 
-		glm::vec3(1.1264f, 4.6385f, 0.0f));
+	global::Arm_R1 = new Mesh("assets/Arm_R1.obj");
+	global::Arm_R1->translate(glm::vec3(1.1264f, 4.6385f, 0.0f));
 
-	global::Arm_R2 = new Mesh("assets/Arm_R2.obj", 
-		glm::vec3(1.56f, 4.1143f, 0.0f));
+	global::Arm_R2 = new Mesh("assets/Arm_R2.obj");
+	global::Arm_R2->translate(glm::vec3(1.56f, 4.1143f, 0.0f));
 
-	global::Arm_L1 = new Mesh("assets/Arm_L1.obj",
-		glm::vec3(-1.1264f, 4.6385f, 0.0f));
+	global::Arm_L1 = new Mesh("assets/Arm_L1.obj");
+	global::Arm_L1->translate(glm::vec3(-1.1264f, 4.6385f, 0.0f));
 
-	global::Arm_L2 = new Mesh("assets/Arm_L2.obj",
-		glm::vec3(-1.56f, 4.1143f, 0.0f));
+	global::Arm_L2 = new Mesh("assets/Arm_L2.obj");
+	global::Arm_L2->translate(glm::vec3(-1.56f, 4.1143f, 0.0f));
 
-	global::Leg_R1 = new Mesh("assets/Leg_R1.obj",
-		glm::vec3(0.56001f, 2.6803f, 0.0f));
+	global::Leg_R1 = new Mesh("assets/Leg_R1.obj");
+	global::Leg_R1->translate(glm::vec3(0.56001f, 2.6803f, 0.0f));
 
-	global::Leg_R2 = new Mesh("assets/Leg_R2.obj",
-		glm::vec3(0.56001f, 1.3538f, 0.0f));
+	global::Leg_R2 = new Mesh("assets/Leg_R2.obj");
+	global::Leg_R2->translate(glm::vec3(0.56001f, 1.3538f, 0.0f));
 
-	global::Leg_L1 = new Mesh("assets/Leg_L1.obj",
-		glm::vec3(-0.56001f, 2.6803f, 0.0f));
+	global::Leg_L1 = new Mesh("assets/Leg_L1.obj");
+	global::Leg_L1->translate(glm::vec3(-0.56001f, 2.6803f, 0.0f));
 
-	global::Leg_L2 = new Mesh("assets/Leg_L2.obj",
-		glm::vec3(-0.56001f, 1.3538f, 0.0f));
+	global::Leg_L2 = new Mesh("assets/Leg_L2.obj");
+	global::Leg_L2->translate(glm::vec3(-0.56001f, 1.3538f, 0.0f));
 
 	// specify relationship
 	global::Head->setParent(*global::Torso);

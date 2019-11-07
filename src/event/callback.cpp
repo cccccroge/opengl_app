@@ -262,6 +262,9 @@ void onMouseMovedDelta(int dx, int dy)
 	if (toolMode == TOOL_MODE::PAN) {
 		global::camViewport.pan(dx, dy);
 	}
+	else if (toolMode == TOOL_MODE::ORBIT) {
+		global::camViewport.orbit(ORBIT_DISTANCE, dx, dy);
+	}
 }
 
 

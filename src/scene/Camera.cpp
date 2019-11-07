@@ -3,6 +3,7 @@
 
 #include "GLM/glm_996/ext/matrix_transform.hpp"
 #include "GLM/glm_996/ext/matrix_clip_space.hpp"
+#include "GLM/glm_996/gtx/projection.hpp"
 #include "../global.h"
 #include <iostream>
 
@@ -27,13 +28,56 @@ Camera::Camera(PROJECTION_TYPE type, std::vector<float> boundary,
 }
 
 
+void Camera::translate(glm::vec3 vec)
+{
+	translation = glm::translate(translation, vec);
+    lookPos = lookPos + vec;
+}
+
+
+void Camera::rotate(float deg, glm::vec3 axis, glm::vec3 pivot/* = glm::vec3(1.0f)*/)
+{
+	glm::vec3 axis_normalized = glm::normalize(axis);
+
+	// has pivot: rotate both pos & lookPos, this will orbit around pivot
+	if (pivot != glm::vec3(1.0f)) {
+        glm::mat4 posMat = getModelMat();
+        glm::vec3 pos(posMat[3][0], posMat[3][1], posMat[3][2]);
+        glm::vec3 offset = pos - pivot;
+        glm::mat4 rot = glm::translate(glm::mat4(1.0f), offset);
+		rot = glm::rotate(rot, glm::radians(deg), axis_normalized);
+        rot = glm::translate(rot, -offset);
+        translation = glm::translate(translation, glm::vec3(rot[3][0], rot[3][1], rot[3][2]));
+
+        offset = lookPos - pivot;
+        rot = glm::translate(glm::mat4(1.0f), offset);
+		rot = glm::rotate(rot, glm::radians(deg), axis_normalized);
+        rot = glm::translate(rot, -offset);
+        glm::mat4 lookPosMat = glm::translate(glm::mat4(1.0f), lookPos);
+        lookPosMat = glm::translate(lookPosMat, glm::vec3(rot[3][0], rot[3][1], rot[3][2]));
+        lookPos = glm::vec3(lookPosMat[3][0], lookPosMat[3][1], lookPosMat[3][2]);
+    }
+	// no pivot: rotate only lookPos, this will look around but not moved
+	else {
+        glm::mat4 posMat = getModelMat();
+        glm::vec3 pos(posMat[3][0], posMat[3][1], posMat[3][2]);
+        glm::vec3 offset = lookPos - pos;
+        glm::mat4 rot = glm::translate(glm::mat4(1.0f), offset);
+		rot = glm::rotate(rot, glm::radians(deg), axis_normalized);
+        rot = glm::translate(rot, -offset);
+        glm::mat4 lookPosMat = glm::translate(glm::mat4(1.0f), lookPos);
+        lookPosMat = glm::translate(lookPosMat, glm::vec3(rot[3][0], rot[3][1], rot[3][2]));
+        lookPos = glm::vec3(lookPosMat[3][0], lookPosMat[3][1], lookPosMat[3][2]);
+	}
+}
+
+
 void Camera::zoom(int direction)
 {
     // move camera toward its face direction
 	glm::vec3 dir = (float)direction * getDirection();
 	glm::vec3 mov = SCALE_SENSITIVITY * dir;
-	translate(mov[0], mov[1], mov[2]);
-	setLookPos(getLookPos() + mov);	// update cam's lookPos
+	translate(mov);
 }
 
 
@@ -48,13 +92,26 @@ void Camera::pan(int xRight, int yDown)
     glm::vec3 movement = -PAN_SENSITIVITY * 
         ((float)xRight * right + (float)yDown * down);
     translate(movement);
-    setLookPos(getLookPos() + movement);	// update cam's lookPos
+}
+
+
+void Camera::orbit(float distance, int xRight, int yDown)
+{
+    // rotate camera with the center point
+    glm::mat4 posMat = getModelMat();
+    glm::vec3 pivot =  glm::vec3(posMat[3][0], posMat[3][1], posMat[3][2])
+        + distance * getDirection();
+    rotate(ORBIT_SENSITIVITY * (float)xRight, UP_VECTOR, pivot);
+
+    glm::vec3 right = glm::normalize(
+        glm::cross(getDirection(), UP_VECTOR));
+    rotate(ORBIT_SENSITIVITY * (float)yDown, right, pivot);
 }
 
 
 glm::mat4 Camera::getViewMat()
 {
-    glm::mat4 posMat = getTranslation() * getOriginal();
+    glm::mat4 posMat = getModelMat();
     glm::vec3 pos(posMat[3][0], posMat[3][1], posMat[3][2]);
     return glm::lookAt(pos, lookPos, UP_VECTOR);
 }
@@ -78,7 +135,7 @@ glm::mat4 Camera::getProjMat()
 
 glm::vec3 Camera::getDirection()
 {
-    glm::mat4 posMat = getTranslation() * getOriginal();
+    glm::mat4 posMat = getModelMat();
     glm::vec3 pos = glm::vec3(posMat[3][0], posMat[3][1], posMat[3][2]);
     
     return glm::normalize(lookPos - pos);

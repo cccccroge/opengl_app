@@ -20,8 +20,17 @@ public:
         glm::vec3 pos = glm::vec3(0.0f, 0.0f, 0.0f), 
         glm::vec3 lookPos = glm::vec3(0.0f, 0.0f, 0.0f), 
         float fov = glm::radians(60.0f));
+
+    // override transformation, lookPos need to be updated
+    void translate(glm::vec3 vec);
+    void rotate(float deg, glm::vec3 axis, 
+        glm::vec3 pivot = glm::vec3(1.0f));
+    // override model matrix, order is different
+    //glm::mat4 getModelMat();
+
     void zoom(int direction);
     void pan(int xRight, int yDown);
+    void orbit(float distance, int xRight, int yDown);
 
     glm::mat4 getViewMat();
     glm::mat4 getProjMat();
@@ -46,5 +55,4 @@ private:
     float right;
     float bottom;
     float top;
-
 };

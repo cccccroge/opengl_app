@@ -13,7 +13,10 @@ public:
 
 	void translate(float x, float y, float z);
     void translate(glm::vec3 vec);
-	void rotate(float deg, std::vector<float> axis);
+	void rotate(float deg, std::vector<float> axis, 
+        glm::vec3 pivot = glm::vec3(1.0f));
+    void rotate(float deg, glm::vec3 axis, 
+        glm::vec3 pivot = glm::vec3(1.0f));
 	void scale(float x, float y, float z);
     void resetTransformation();
 
@@ -22,13 +25,23 @@ public:
 
     inline glm::mat4 getOriginal() { return original; }
     inline glm::mat4 getTranslation() { return translation; }
+    inline glm::mat4 getRotation() { return rotation; }
+    inline glm::mat4 getScaling() { return scaling; }
 
-private:
+protected:
     glm::mat4 original; // TODO: maybe split to world and local space?
+
+protected:
     glm::mat4 translation;
     glm::mat4 rotation;
     glm::mat4 scaling;
 
-protected:
+    /* if has parent, use these three so that we can keep original space
+       to adjust its child transformation, to prevent chain adjust which
+       is not correct. */
+    glm::mat4 translation_p;
+    glm::mat4 rotation_p;
+    glm::mat4 scaling_p;
+
     SceneObject *parent;
 };
