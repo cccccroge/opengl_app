@@ -13,10 +13,10 @@ public:
 
 	void translate(float x, float y, float z);
     void translate(glm::vec3 vec);
-	void rotate(float deg, std::vector<float> axis, 
-        glm::vec3 pivot = glm::vec3(1.0f));
-    void rotate(float deg, glm::vec3 axis, 
-        glm::vec3 pivot = glm::vec3(1.0f));
+	void rotate(float deg, std::vector<float> axis);
+    void rotate(float deg, glm::vec3 axis);
+    void rotate(glm::mat4 rot);
+    void rotatePivot(float deg, glm::vec3 axis, glm::vec3 pivot);
 	void scale(float x, float y, float z);
     void resetTransformation();
 
@@ -27,6 +27,7 @@ public:
     inline glm::mat4 getTranslation() { return translation; }
     inline glm::mat4 getRotation() { return rotation; }
     inline glm::mat4 getScaling() { return scaling; }
+    inline SceneObject* getParent() { return parent; }
 
 protected:
     glm::mat4 original; // TODO: maybe split to world and local space?

@@ -84,9 +84,9 @@ void setupRendering()
 	global::Leg_L2->setParent(*global::Leg_L1);
 
 	// test if parent work
-	global::Torso->rotate(15, std::vector<float>({ 1.0f, 0.0f, 0.0f }));
+/* 	global::Torso->rotate(15, std::vector<float>({ 1.0f, 0.0f, 0.0f }));
 	global::Arm_R1->rotate(30, std::vector<float>({ 1.0f, 0.0f, 0.0f }));
-	global::Arm_R2->rotate(45, std::vector<float>({ 1.0f, 0.0f, 0.0f }));
+	global::Arm_R2->rotate(45, std::vector<float>({ 1.0f, 0.0f, 0.0f })); */
 
 	// setup camera
 	global::camViewport = Camera(PROJECTION_TYPE::PERSPECTIVE, 

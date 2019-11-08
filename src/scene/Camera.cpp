@@ -15,9 +15,10 @@ Camera::Camera() : SceneObject(glm::vec3(0.0f, 0.0f, 0.0f))
 
 
 Camera::Camera(PROJECTION_TYPE type, std::vector<float> boundary, 
-    glm::vec3 pos, glm::vec3 lookPos, float fov) :
-        proj_type(type), near(boundary[0]), far(boundary[1]), 
-        SceneObject(pos), lookPos(lookPos), fov(glm::radians(fov))
+    glm::vec3 position, glm::vec3 lookPos, float fov) :
+        proj_type(type), lookPosObj(), rightDirObj(), upDirObj(), 
+        fov(glm::radians(fov)), near(boundary[0]), far(boundary[1]), 
+        SceneObject()
 {
     if (proj_type == PROJECTION_TYPE::ORTHOGONAL) {
         left = boundary[2];
@@ -25,95 +26,75 @@ Camera::Camera(PROJECTION_TYPE type, std::vector<float> boundary,
         bottom = boundary[4];
         top = boundary[5];
     }
-}
 
+    // translate to position
+    translate(position);
 
-void Camera::translate(glm::vec3 vec)
-{
-	translation = glm::translate(translation, vec);
-    lookPos = lookPos + vec;
-}
+    // setup auxillary objects
+    lookPosObj.translate(lookPos);
 
+    glm::vec3 rightDir = glm::normalize(
+        glm::cross(lookPos - position, UP_VECTOR));
+    rightDirObj.translate(position);
+    rightDirObj.translate(rightDir);
 
-void Camera::rotate(float deg, glm::vec3 axis, glm::vec3 pivot/* = glm::vec3(1.0f)*/)
-{
-	glm::vec3 axis_normalized = glm::normalize(axis);
-
-	// has pivot: rotate both pos & lookPos, this will orbit around pivot
-	if (pivot != glm::vec3(1.0f)) {
-        glm::mat4 posMat = getModelMat();
-        glm::vec3 pos(posMat[3][0], posMat[3][1], posMat[3][2]);
-        glm::vec3 offset = pos - pivot;
-        glm::mat4 rot = glm::translate(glm::mat4(1.0f), offset);
-		rot = glm::rotate(rot, glm::radians(deg), axis_normalized);
-        rot = glm::translate(rot, -offset);
-        translation = glm::translate(translation, glm::vec3(rot[3][0], rot[3][1], rot[3][2]));
-
-        offset = lookPos - pivot;
-        rot = glm::translate(glm::mat4(1.0f), offset);
-		rot = glm::rotate(rot, glm::radians(deg), axis_normalized);
-        rot = glm::translate(rot, -offset);
-        glm::mat4 lookPosMat = glm::translate(glm::mat4(1.0f), lookPos);
-        lookPosMat = glm::translate(lookPosMat, glm::vec3(rot[3][0], rot[3][1], rot[3][2]));
-        lookPos = glm::vec3(lookPosMat[3][0], lookPosMat[3][1], lookPosMat[3][2]);
-    }
-	// no pivot: rotate only lookPos, this will look around but not moved
-	else {
-        glm::mat4 posMat = getModelMat();
-        glm::vec3 pos(posMat[3][0], posMat[3][1], posMat[3][2]);
-        glm::vec3 offset = lookPos - pos;
-        glm::mat4 rot = glm::translate(glm::mat4(1.0f), offset);
-		rot = glm::rotate(rot, glm::radians(deg), axis_normalized);
-        rot = glm::translate(rot, -offset);
-        glm::mat4 lookPosMat = glm::translate(glm::mat4(1.0f), lookPos);
-        lookPosMat = glm::translate(lookPosMat, glm::vec3(rot[3][0], rot[3][1], rot[3][2]));
-        lookPos = glm::vec3(lookPosMat[3][0], lookPosMat[3][1], lookPosMat[3][2]);
-	}
+    glm::vec3 upDir = glm::normalize(
+        glm::cross(rightDir, lookPos - position));
+    upDirObj.translate(position);
+    upDirObj.translate(upDir);
 }
 
 
 void Camera::zoom(int direction)
 {
     // move camera toward its face direction
-	glm::vec3 dir = (float)direction * getDirection();
+	glm::vec3 dir = (float)direction * getDirection('f');
 	glm::vec3 mov = SCALE_SENSITIVITY * dir;
 	translate(mov);
+    lookPosObj.translate(mov);
+    rightDirObj.translate(mov);
+    upDirObj.translate(mov);
 }
 
 
 void Camera::pan(int xRight, int yDown)
 {
     // move camera toward the vectors orthogonal to its face direction
-    glm::vec3 right = glm::normalize(
-        glm::cross(getDirection(), UP_VECTOR));
+    glm::vec3 right = getDirection('r');
     glm::vec3 down = glm::normalize(
-        glm::cross(getDirection(), right));
+        glm::cross(getDirection('f'), right));
 
-    glm::vec3 movement = -PAN_SENSITIVITY * 
+    glm::vec3 mov = -PAN_SENSITIVITY * 
         ((float)xRight * right + (float)yDown * down);
-    translate(movement);
+    translate(mov);
+    lookPosObj.translate(mov);
+    rightDirObj.translate(mov);
+    upDirObj.translate(mov);
 }
 
 
 void Camera::orbit(float distance, int xRight, int yDown)
 {
-    // rotate camera with the center point
-    glm::mat4 posMat = getModelMat();
-    glm::vec3 pivot =  glm::vec3(posMat[3][0], posMat[3][1], posMat[3][2])
-        + distance * getDirection();
-    rotate(ORBIT_SENSITIVITY * (float)xRight, UP_VECTOR, pivot);
+    // rotate camera at the center point
+    glm::vec3 pivot =  getPos() + distance * getDirection('f');
+    float dx_right = ORBIT_SENSITIVITY * (float)xRight;
+    float dy_down = ORBIT_SENSITIVITY * (float)yDown;
+    glm::vec3 rightDir = getDirection('r');
 
-    glm::vec3 right = glm::normalize(
-        glm::cross(getDirection(), UP_VECTOR));
-    rotate(ORBIT_SENSITIVITY * (float)yDown, right, pivot);
+    rotatePivot(dx_right, UP_VECTOR, pivot);
+    rotatePivot(dy_down, rightDir, pivot);
+    lookPosObj.rotatePivot(dx_right, UP_VECTOR, pivot);
+    lookPosObj.rotatePivot(dy_down, rightDir, pivot);
+    rightDirObj.rotatePivot(dx_right, UP_VECTOR, pivot);
+    rightDirObj.rotatePivot(dy_down, rightDir, pivot);
+    upDirObj.rotatePivot(dx_right, UP_VECTOR, pivot);
+    upDirObj.rotatePivot(dy_down, rightDir, pivot);
 }
 
 
 glm::mat4 Camera::getViewMat()
 {
-    glm::mat4 posMat = getModelMat();
-    glm::vec3 pos(posMat[3][0], posMat[3][1], posMat[3][2]);
-    return glm::lookAt(pos, lookPos, UP_VECTOR);
+    return glm::lookAt(getPos(), getLookPos(), getDirection('u'));
 }
 
 
@@ -133,12 +114,40 @@ glm::mat4 Camera::getProjMat()
 }
 
 
-glm::vec3 Camera::getDirection()
+glm::vec3 Camera::getDirection(const char which)
 {
-    glm::mat4 posMat = getModelMat();
-    glm::vec3 pos = glm::vec3(posMat[3][0], posMat[3][1], posMat[3][2]);
-    
-    return glm::normalize(lookPos - pos);
+    if (which == 'f') {
+        return glm::normalize(getLookPos() - getPos());
+    }
+    else if (which == 'r') {
+        return glm::normalize(getRightPos() - getPos());
+    }
+    else if (which == 'u') {
+        return glm::normalize(getUpPos() - getPos());
+    }
 }
 
+
+glm::vec3 Camera::getPos()
+{
+    return glm::vec3(getModelMat()[3]);
+}
+
+
+glm::vec3 Camera::getLookPos()
+{
+    return glm::vec3(lookPosObj.getModelMat()[3]);
+}
+
+
+glm::vec3 Camera::getRightPos()
+{
+    return glm::vec3(rightDirObj.getModelMat()[3]);
+}
+
+
+glm::vec3 Camera::getUpPos()
+{
+    return glm::vec3(upDirObj.getModelMat()[3]);
+}
 

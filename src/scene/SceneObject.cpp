@@ -3,7 +3,7 @@
 #include "GLM/glm_996/geometric.hpp"
 
 
-SceneObject::SceneObject(glm::vec3 pos) : 
+SceneObject::SceneObject(glm::vec3 pos/* = glm::vec3(0.0f, 0.0f, 0.0f)*/) : 
 	original(glm::mat4(1.0f)), 
     translation(glm::mat4(1.0f)),
 	rotation(glm::mat4(1.0f)),
@@ -33,12 +33,7 @@ glm::mat4 SceneObject::getModelMat()
 
 void SceneObject::translate(float x, float y, float z)
 {
-	if (parent != NULL) {
-		translation_p = glm::translate(translation_p, glm::vec3(x, y, z));
-	}
-	else {
-		translation = glm::translate(translation, glm::vec3(x, y, z));
-	}
+	translate(glm::vec3(x, y, z));
 }
 
 
@@ -53,20 +48,15 @@ void SceneObject::translate(glm::vec3 vec)
 }
 
 
-void SceneObject::rotate(float deg, std::vector<float> axis, glm::vec3 pivot/* = glm::vec3(1.0)*/)
+void SceneObject::rotate(float deg, std::vector<float> axis)
 {
-/* 	glm::mat4 newRotation(1.0f);
+	rotate(deg, glm::vec3(axis[0], axis[1], axis[2]));
+}
 
-	// pivot provided, offset matrix before rotate
-	if (pivot != glm::vec3(1.0f)) {
-		glm::mat4 posMat = translation * original;
-		glm::vec3 pos(posMat[3][0], posMat[3][1], posMat[3][2]);
-		glm::vec3 offset = pos - pivot;
-		newRotation = glm::translate(newRotation, offset);
-	} */
 
-	glm::vec3 axis_normalized = 
-		glm::normalize(glm::vec3(axis[0], axis[1], axis[2]));
+void SceneObject::rotate(float deg, glm::vec3 axis)
+{
+	glm::vec3 axis_normalized = glm::normalize(axis);
 
 	if (parent != NULL) {
 		rotation_p = glm::rotate(rotation_p, glm::radians(deg), axis_normalized);
@@ -74,39 +64,39 @@ void SceneObject::rotate(float deg, std::vector<float> axis, glm::vec3 pivot/* =
 	else {
 		rotation = glm::rotate(rotation, glm::radians(deg), axis_normalized);
 	}
-	
-
 }
 
 
-void SceneObject::rotate(float deg, glm::vec3 axis, glm::vec3 pivot/* = glm::vec3(1.0f)*/)
+void SceneObject::rotate(glm::mat4 rot)
+{
+	if (parent != NULL) {
+		rotation_p = rot * rotation_p;
+	}
+	else {
+		rotation = rot * rotation;
+	}
+}
+
+
+void SceneObject::rotatePivot(float deg, glm::vec3 axis, glm::vec3 pivot)
 {
 	glm::vec3 axis_normalized = glm::normalize(axis);
 
-	// has pivot: translate and rotate, and reversing the translation
-	if (pivot != glm::vec3(1.0f)) {
-		if (parent != NULL) {
+	glm::vec3 offset = glm::vec3(getModelMat()[3]) - pivot;
+	glm::mat4 rotTran = glm::translate(glm::mat4(1.0f), offset);
+	rotTran = glm::rotate(rotTran, glm::radians(deg), axis_normalized);
+	rotTran = glm::translate(rotTran, -offset);
 
-		}
-		else {
-			glm::mat4 posMat = getModelMat();
-			glm::vec3 offset = 
-				glm::vec3(posMat[3][0], posMat[3][1], posMat[3][2]) - pivot;
-			glm::mat4 r = glm::translate(glm::mat4(1.0f), offset);
+	glm::mat4 tran = glm::translate(glm::mat4(1.0f), glm::vec3(rotTran[3]));
+	glm::mat4 rot = glm::translate(rotTran, glm::vec3(-rotTran[3]));
 
-			rotation = glm::rotate(r, glm::radians(deg), axis_normalized);
-			rotation = glm::translate(glm::mat4(1.0f), -offset);
-		}
-		
-	}
-	// no pivot: rotate locally
+	if (parent != NULL) {
+		translation_p = tran * translation_p;
+		rotation_p = rot * rotation_p;
+	} 
 	else {
-		if (parent != NULL) {
-			rotation_p = glm::rotate(rotation_p, glm::radians(deg), axis_normalized);
-		}
-		else {
-			rotation = glm::rotate(rotation, glm::radians(deg), axis_normalized);
-		}
+		translation = tran * translation;
+		rotation = rot * rotation;
 	}
 }
 

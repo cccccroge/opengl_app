@@ -21,27 +21,18 @@ public:
         glm::vec3 lookPos = glm::vec3(0.0f, 0.0f, 0.0f), 
         float fov = glm::radians(60.0f));
 
-    // override transformation, lookPos need to be updated
-    void translate(glm::vec3 vec);
-    void rotate(float deg, glm::vec3 axis, 
-        glm::vec3 pivot = glm::vec3(1.0f));
-    // override model matrix, order is different
-    //glm::mat4 getModelMat();
-
     void zoom(int direction);
     void pan(int xRight, int yDown);
     void orbit(float distance, int xRight, int yDown);
 
     glm::mat4 getViewMat();
     glm::mat4 getProjMat();
-    glm::vec3 getDirection();
-
-    inline glm::vec3 getLookPos() { return lookPos; }
-    inline void setLookPos(glm::vec3 pos) { lookPos = pos; }
-
+    
 private:
     PROJECTION_TYPE proj_type;
-    glm::vec3 lookPos;
+    SceneObject lookPosObj;
+    SceneObject rightDirObj;
+    SceneObject upDirObj;
 
     // used in PERSPECTIVE
     float fov;  // rads
@@ -55,4 +46,11 @@ private:
     float right;
     float bottom;
     float top;
+
+private:
+    glm::vec3 getDirection(const char which);
+    glm::vec3 getPos();
+    glm::vec3 getLookPos();
+    glm::vec3 getRightPos();
+    glm::vec3 getUpPos();
 };
