@@ -25,6 +25,7 @@ public:
     void pan(int xRight, int yDown);
     void move(const char dir);
     void orbit(float distance, int xRight, int yDown);
+    void lookAround(int xRight, int yDown);
 
     glm::mat4 getViewMat();
     glm::mat4 getProjMat();

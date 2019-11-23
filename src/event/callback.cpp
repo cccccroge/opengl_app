@@ -82,6 +82,11 @@ void onKeyboardPressed(unsigned char key, int x, int y)
 			}
 			std::cout << std::endl;
 			checkTool(keyStr);
+			if (toolMode == TOOL_MODE::FIRST_PERSON) {
+				// update mouse pos immediately, or it will be uninitialized
+				MOUSE_POS.x = x;
+				MOUSE_POS.y = y;
+			}
 		}
 	}
 	else if (toolMode == TOOL_MODE::FIRST_PERSON) {
@@ -207,7 +212,8 @@ void onMousePressed(int button, int state, int x, int y)
 void onMouseMoved(int x, int y)
 {
 	if (toolMode == TOOL_MODE::ORBIT || 
-		toolMode == TOOL_MODE::PAN) {
+		toolMode == TOOL_MODE::PAN ||
+		toolMode == TOOL_MODE::FIRST_PERSON) {
 
 		onMouseMovedDelta(x - MOUSE_POS.x, y - MOUSE_POS.y);
 		MOUSE_POS.x = x;
@@ -223,6 +229,9 @@ void onMouseMovedDelta(int dx, int dy)
 	}
 	else if (toolMode == TOOL_MODE::ORBIT) {
 		global::camViewport.orbit(ORBIT_DISTANCE, dx, dy);
+	}
+	else if (toolMode == TOOL_MODE::FIRST_PERSON) {
+		global::camViewport.lookAround(dx, dy);
 	}
 }
 

@@ -119,6 +119,23 @@ void Camera::orbit(float distance, int xRight, int yDown)
 }
 
 
+void Camera::lookAround(int xRight, int yDown)
+{
+    // rotate camera at its postion
+    glm::vec3 pivot =  getPos();
+    float dx_right = FIRST_PERSON_ROTATE_SPEED * (float)xRight;
+    float dy_down = FIRST_PERSON_ROTATE_SPEED * (float)yDown;
+    glm::vec3 rightDir = getDirection('r');
+
+    lookPosObj.rotatePivot(dx_right, UP_VECTOR, pivot);
+    lookPosObj.rotatePivot(dy_down, rightDir, pivot);
+    rightDirObj.rotatePivot(dx_right, UP_VECTOR, pivot);
+    rightDirObj.rotatePivot(dy_down, rightDir, pivot);
+    upDirObj.rotatePivot(dx_right, UP_VECTOR, pivot);
+    upDirObj.rotatePivot(dy_down, rightDir, pivot);
+}
+
+
 glm::mat4 Camera::getViewMat()
 {
     return glm::lookAt(getPos(), getLookPos(), getDirection('u'));
