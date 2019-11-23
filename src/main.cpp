@@ -9,7 +9,7 @@
 #include "global.h"
 #include "utils.h"
 #include "init.h"
-#include "scene/Mesh.h"
+#include "scene/Model.h"
 #include "render/Shader.h"
 #include "render/ShaderProgram.h"
 #include "scene/Camera.h"
@@ -19,16 +19,16 @@
 
 ShaderProgram* global::program;
 Renderer* global::renderer;
-Mesh* global::Torso;
-Mesh* global::Head;
-Mesh* global::Arm_R1;
-Mesh* global::Arm_R2;
-Mesh* global::Arm_L1;
-Mesh* global::Arm_L2;
-Mesh* global::Leg_R1;
-Mesh* global::Leg_R2;
-Mesh* global::Leg_L1;
-Mesh* global::Leg_L2;
+Model* global::Torso;
+Model* global::Head;
+Model* global::Arm_R1;
+Model* global::Arm_R2;
+Model* global::Arm_L1;
+Model* global::Arm_L2;
+Model* global::Leg_R1;
+Model* global::Leg_R2;
+Model* global::Leg_L1;
+Model* global::Leg_L2;
 
 void setupRendering()
 {
@@ -40,35 +40,35 @@ void setupRendering()
 	global::program->addShader(fragmentShader);
 	global::program->compile();
    
-	// setup meshes
-	global::Torso = new Mesh("assets/Torso.obj");
+	// setup modeles
+	global::Torso = new Model("assets/Torso.obj");
 	global::Torso->translate(glm::vec3(0.0f, 2.7361f, 0.0f));	// global pos, copy from blender
 
-	global::Head = new Mesh("assets/Head.obj");
+	global::Head = new Model("assets/Head.obj");
 	global::Head->translate(glm::vec3(0.0f, 5.1385f, 0.0f));
 
-	global::Arm_R1 = new Mesh("assets/Arm_R1.obj");
+	global::Arm_R1 = new Model("assets/Arm_R1.obj");
 	global::Arm_R1->translate(glm::vec3(1.1264f, 4.6385f, 0.0f));
 
-	global::Arm_R2 = new Mesh("assets/Arm_R2.obj");
+	global::Arm_R2 = new Model("assets/Arm_R2.obj");
 	global::Arm_R2->translate(glm::vec3(1.56f, 4.1143f, 0.0f));
 
-	global::Arm_L1 = new Mesh("assets/Arm_L1.obj");
+	global::Arm_L1 = new Model("assets/Arm_L1.obj");
 	global::Arm_L1->translate(glm::vec3(-1.1264f, 4.6385f, 0.0f));
 
-	global::Arm_L2 = new Mesh("assets/Arm_L2.obj");
+	global::Arm_L2 = new Model("assets/Arm_L2.obj");
 	global::Arm_L2->translate(glm::vec3(-1.56f, 4.1143f, 0.0f));
 
-	global::Leg_R1 = new Mesh("assets/Leg_R1.obj");
+	global::Leg_R1 = new Model("assets/Leg_R1.obj");
 	global::Leg_R1->translate(glm::vec3(0.56001f, 2.6803f, 0.0f));
 
-	global::Leg_R2 = new Mesh("assets/Leg_R2.obj");
+	global::Leg_R2 = new Model("assets/Leg_R2.obj");
 	global::Leg_R2->translate(glm::vec3(0.56001f, 1.3538f, 0.0f));
 
-	global::Leg_L1 = new Mesh("assets/Leg_L1.obj");
+	global::Leg_L1 = new Model("assets/Leg_L1.obj");
 	global::Leg_L1->translate(glm::vec3(-0.56001f, 2.6803f, 0.0f));
 
-	global::Leg_L2 = new Mesh("assets/Leg_L2.obj");
+	global::Leg_L2 = new Model("assets/Leg_L2.obj");
 	global::Leg_L2->translate(glm::vec3(-0.56001f, 1.3538f, 0.0f));
 
 	// specify relationship
@@ -95,16 +95,16 @@ void setupRendering()
 
 	// send to renderer
 	global::renderer = new Renderer();
-	global::renderer->addMesh(*global::Arm_R1);
-	global::renderer->addMesh(*global::Arm_R2);
-	global::renderer->addMesh(*global::Arm_L1);
-	global::renderer->addMesh(*global::Arm_L2);
-	global::renderer->addMesh(*global::Leg_R1);
-	global::renderer->addMesh(*global::Leg_R2);
-	global::renderer->addMesh(*global::Leg_L1);
-	global::renderer->addMesh(*global::Leg_L2);
-	global::renderer->addMesh(*global::Torso);
-	global::renderer->addMesh(*global::Head);
+	global::renderer->addModel(*global::Arm_R1);
+	global::renderer->addModel(*global::Arm_R2);
+	global::renderer->addModel(*global::Arm_L1);
+	global::renderer->addModel(*global::Arm_L2);
+	global::renderer->addModel(*global::Leg_R1);
+	global::renderer->addModel(*global::Leg_R2);
+	global::renderer->addModel(*global::Leg_L1);
+	global::renderer->addModel(*global::Leg_L2);
+	global::renderer->addModel(*global::Torso);
+	global::renderer->addModel(*global::Head);
 	
 	global::renderer->setCamera(global::camViewport);
 

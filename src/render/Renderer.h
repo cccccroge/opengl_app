@@ -1,7 +1,7 @@
 #pragma once
 
 #include "GLEW/glew.h"
-#include "../scene/Mesh.h"
+#include "../scene/Model.h"
 #include "../scene/Camera.h"
 #include <vector>
 
@@ -12,13 +12,13 @@ public:
     Renderer();
     ~Renderer();
     void setCamera(Camera &cam);
-    void addMesh(Mesh &mesh);
+    void addModel(Model &model);
     void RenderAll();
 
     inline Camera* getCamera() { return m_camera; }
 
 private:
     Camera *m_camera;
-    std::vector<Mesh *> mesh_vec;
+    std::vector<Model *> model_vec;
 };
 

@@ -25,9 +25,9 @@ void Renderer::setCamera(Camera &cam)
 }
 
 
-void Renderer::addMesh(Mesh &mesh)
+void Renderer::addModel(Model &model)
 {
-    mesh_vec.push_back(&mesh);
+    model_vec.push_back(&model);
 }
 
 
@@ -39,18 +39,18 @@ void Renderer::RenderAll()
     // Bind Program
     global::program->bind();
 
-    for (auto meshPtr : mesh_vec) {
+    for (auto modelPtr : model_vec) {
         // change MVP in program
-        glm::mat4 model = (*meshPtr).getModelMat();
+        glm::mat4 model = (*modelPtr).getModelMat();
         glm::mat4 view = (*m_camera).getViewMat();
         glm::mat4 proj = (*m_camera).getProjMat();
         global::program->setUniformMat4("um4mvp", proj * view * model);
 
         // bind object
-        (*meshPtr).bind();
+        (*modelPtr).bind();
 
         // issue draw call
-        GLsizei count = (*meshPtr).getShape().indexCount;
+        GLsizei count = (*modelPtr).getShape().indexCount;
 	    glDrawElements(GL_TRIANGLES, count, GL_UNSIGNED_INT, 0);
 	}
 

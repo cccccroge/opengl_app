@@ -11,7 +11,7 @@ EVENT	:= src/event
 INCLUDE	:= include
 LIB     := lib
 
-LIBRARIES	:= -lglut -lGLEW -lGL -lX11 -lXi -lXxf86vm
+LIBRARIES	:= -lglut -lGLEW -lGL -lX11 -lXi -lXxf86vm -lassimp
 EXECUTABLE	:= main
 
 

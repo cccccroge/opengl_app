@@ -11,7 +11,7 @@
 #include <map>
 #include <set>
 #include "../global.h"
-#include "../scene/Mesh.h"
+#include "../scene/Model.h"
 #include "keymap.h"
 
 
