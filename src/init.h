@@ -22,6 +22,8 @@
 #define PAN_SENSITIVITY 0.05f
 #define ORBIT_SENSITIVITY 0.5f
 #define ORBIT_DISTANCE 10.0f
+#define FIRST_PERSON_MOVE_SPEED 0.2f
+#define FIRST_PERSON_ROTATE_SPEED 0.4f
 
 /* --------------------------------------------------------------------
  * initGlutContext

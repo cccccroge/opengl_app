@@ -61,11 +61,38 @@ void Camera::pan(int xRight, int yDown)
 {
     // move camera toward the vectors orthogonal to its face direction
     glm::vec3 right = getDirection('r');
-    glm::vec3 down = glm::normalize(
+    glm::vec3 down = glm::normalize(    //TODO: use getUp
         glm::cross(getDirection('f'), right));
 
     glm::vec3 mov = -PAN_SENSITIVITY * 
         ((float)xRight * right + (float)yDown * down);
+    translate(mov);
+    lookPosObj.translate(mov);
+    rightDirObj.translate(mov);
+    upDirObj.translate(mov);
+}
+
+
+void Camera::move(const char dir)
+{
+    glm::vec3 mov;
+
+    if (dir == 'r' || dir == 'l') {
+        glm::vec3 right = getDirection('r');
+        mov = (dir == 'r') ? FIRST_PERSON_MOVE_SPEED * right
+            : -FIRST_PERSON_MOVE_SPEED * right;
+    }
+    else if (dir == 'f' || dir == 'b') {
+        glm::vec3 front = getDirection('f');
+        mov = (dir == 'f') ? FIRST_PERSON_MOVE_SPEED * front
+            : -FIRST_PERSON_MOVE_SPEED * front;
+    }
+    else if (dir == 'u' || dir == 'd') {
+        glm::vec3 world_up = UP_VECTOR;
+        mov = (dir == 'u') ? FIRST_PERSON_MOVE_SPEED * world_up
+            : -FIRST_PERSON_MOVE_SPEED * world_up;
+    }
+
     translate(mov);
     lookPosObj.translate(mov);
     rightDirObj.translate(mov);
@@ -124,6 +151,9 @@ glm::vec3 Camera::getDirection(const char which)
     }
     else if (which == 'u') {
         return glm::normalize(getUpPos() - getPos());
+    }
+    else {
+        std::cout << "wrong direction provided" << std::endl;
     }
 }
 

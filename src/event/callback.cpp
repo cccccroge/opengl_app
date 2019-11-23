@@ -72,53 +72,51 @@ void onWindowReshaped(int width, int height)
 
 void onKeyboardPressed(unsigned char key, int x, int y)
 {
-	std::string keyStr(1, key);
-	if (!btnsPressed[keyStr]) {
-		pressedBtnSet.insert(keyStr);
-		std::cout << "set: ";
-		for (auto str : pressedBtnSet) {
-			std::cout << str << " ";
+	if (toolMode == TOOL_MODE::NONE) {
+		std::string keyStr(1, key);
+		if (!btnsPressed[keyStr]) {
+			pressedBtnSet.insert(keyStr);
+			std::cout << "set: ";
+			for (auto str : pressedBtnSet) {
+				std::cout << str << " ";
+			}
+			std::cout << std::endl;
+			checkTool(keyStr);
 		}
-		std::cout << std::endl;
-		checkTool(keyStr);
 	}
-	
-	switch(key) {
-		case 'd':
-			global::Torso->translate(0.5f, 0.0f, 0.0f);
-			break;
+	else if (toolMode == TOOL_MODE::FIRST_PERSON) {
+		switch(key) {
+			case 'w':
+				global::camViewport.move('f');
+				break;
 
-		case 'a':
-			global::Torso->translate(-0.5f, 0.0f, 0.0f);
-			break;
+			case 's':
+				global::camViewport.move('b');
+				break;
 
-		case 'w':
-			global::Torso->translate(0.0f, 0.0f, 0.5f);
-			break;
+			case 'a':
+				global::camViewport.move('l');
+				break;
 
-		case 's':
-			global::Torso->translate(0.0f, 0.0f, -0.5f);
-			break;
+			case 'd':
+				global::camViewport.move('r');
+				break;
 
-		case 'x':
-			global::Torso->rotate(5.0f, std::vector<float>({ 1.0f, 0.0f, 0.0f }));
-			break;
+			case 'z':
+				global::camViewport.move('u');
+				break;
 
-		case 'y':
-			global::Torso->rotate(5.0f, std::vector<float>({ 0.0f, 1.0f, 0.0f }));
-			break;
+			case 'x':
+				global::camViewport.move('d');
+				break;
+				
+			case 27:	// ESC
+				checkTool("");
+				break;
 
-		case 'z':
-			global::Torso->rotate(5.0f, std::vector<float>({ 0.0f, 0.0f, 1.0f }));
-			break;
-
-		case 'f':
-			glutFullScreenToggle();
-			break;
-
-		default:
-			std::cout << "some keys pressed" << std::endl;
-			break;
+			default:
+				break;
+		}
 	}
 }
 
@@ -132,59 +130,22 @@ void onKeyboardReleased(unsigned char key, int x, int y)
 		std::cout << str << " ";
 	}
 	std::cout << std::endl;
-	
-	switch(key)
-	{
-		case 'd':
-			break;
-
-		case 'a':
-			break;
-
-		case 'w':
-			break;
-
-		case 's':
-			break;
-
-		case 'x':
-			break;
-
-		case 'y':
-			break;
-
-		case 'z':
-			break;
-
-		case 'f':
-			glutFullScreenToggle();
-			break;
-
-		default:
-			std::cout << "some keys released" << std::endl;
-			break;
-	}
 }
 
 
 void onSpecialkeysPressed(int key, int x, int y)
 {
-	std::string keyStr = btn2str(key);
-	if (!btnsPressed[keyStr]) {
-		pressedBtnSet.insert(keyStr);
-		std::cout << "set: ";
-		for (auto str : pressedBtnSet) {
-			std::cout << str << " ";
+	if (toolMode == TOOL_MODE::NONE) {
+		std::string keyStr = btn2str(key);
+		if (!btnsPressed[keyStr]) {
+			pressedBtnSet.insert(keyStr);
+			std::cout << "set: ";
+			for (auto str : pressedBtnSet) {
+				std::cout << str << " ";
+			}
+			std::cout << std::endl;
+			checkTool(keyStr);
 		}
-		std::cout << std::endl;
-		checkTool(keyStr);
-	}
-
-	switch(key)
-	{
-		default:
-			std::cout << "special keys pressed" << std::endl;
-			break;
 	}
 }
 
@@ -198,40 +159,35 @@ void onSpecialkeysReleased(int key, int x, int y)
 		std::cout << str << " ";
 	}
 	std::cout << std::endl;
-
-	switch(key)
-	{
-		default:
-			std::cout << "special keys released" << std::endl;
-			break;
-	}
 }
 
 
 void onMousePressed(int button, int state, int x, int y)
 {
 	if (state == GLUT_DOWN) {
+		if (toolMode == TOOL_MODE::NONE) {
+			std::string keyStr = btn2str(button);
+			if (!btnsPressed[keyStr]) {
+				pressedBtnSet.insert(keyStr);
+				std::cout << "set: ";
+				for (auto str : pressedBtnSet) {
+					std::cout << str << " ";
+				}
+				std::cout << std::endl;
 
-		std::string keyStr = btn2str(button);
-		if (!btnsPressed[keyStr]) {
-			pressedBtnSet.insert(keyStr);
-			std::cout << "set: ";
-			for (auto str : pressedBtnSet) {
-				std::cout << str << " ";
+				checkTool(keyStr);
+				if (toolMode == TOOL_MODE::ORBIT || 	
+					toolMode == TOOL_MODE::PAN) {
+					// update mouse pos immediately, or it will be uninitialized
+					MOUSE_POS.x = x;
+					MOUSE_POS.y = y;
+				}
 			}
-			std::cout << std::endl;
-			checkTool(keyStr);
 		}
 
-		if (toolMode == TOOL_MODE::ORBIT || 
-			toolMode == TOOL_MODE::PAN) {
-			MOUSE_POS.x = x;
-			MOUSE_POS.y = y;
-		}
 	}
 
 	else if (state == GLUT_UP) {
-
 		std::string keyStr = btn2str(button);
 		pressedBtnSet.erase(keyStr);
 		std::cout << "set: ";
@@ -240,7 +196,10 @@ void onMousePressed(int button, int state, int x, int y)
 		}
 		std::cout << std::endl;
 
-		checkTool("");
+		if (toolMode == TOOL_MODE::ORBIT || 
+			toolMode == TOOL_MODE::PAN) {
+			checkTool("");			
+		}
 	}	
 }
 
@@ -281,7 +240,9 @@ void onMouseWheelSpinned(int wheel, int direction, int x, int y)
 		return;
 	}
 
-	global::camViewport.zoom(direction);
+	if (toolMode == TOOL_MODE::NONE) {
+		global::camViewport.zoom(direction);
+	}
 }
 
 

@@ -12,6 +12,9 @@ std::map< std::pair<std::set<std::string>, std::string>, TOOL_MODE > keyMap = {
         /*{
             { {?} }, TOOL_MODE::ZOOM  // ignore, GLUT treat mouse wheel as seperated callback
         },*/
+        {
+            { { "shift_L" }, "F" }, TOOL_MODE::FIRST_PERSON
+        },
     };
 
 std::string btn2str(int GLUT_BUTTON)
