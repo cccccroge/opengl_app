@@ -7,29 +7,18 @@
 Texture::Texture(const char *path) : 
     width(0), height(0), data(NULL), type(""), path(path)
 {
-	std::cout << "construct Texture: " << std::string(path) << std::endl;
-	int n;
-	stbi_uc *_data = stbi_load(path, &width, &height, &n, 4);
-	if(_data != NULL)
-	{
-		data = new unsigned char[width * height * 4 * sizeof(unsigned char)];
-		memcpy(data, _data, width * height * 4 * sizeof(unsigned char));
-		// vertical-mirror image data
-		for (size_t i = 0; i < width; i++)
-		{
-			for (size_t j = 0; j < height / 2; j++)
-			{
-				for(size_t k = 0; k < 4; k++) {
-					std::swap(data[(j * width + i) * 4 + k], data[((height - j - 1) * width + i) * 4 + k]);
-				}
-			}
-		}
-		stbi_image_free(_data);
+	std::cout << "constructing Texture: " << std::string(path) << std::endl;
 
+	stbi_set_flip_vertically_on_load(1);
+
+	int BPP;	// byte per pixel?
+	data = stbi_load(path, &width, &height, &BPP, 4);
+	if (data != NULL) {
+		std::cout << "loading pic successfully" << std::endl;
 		setUp();
 	}
 	else {
-		std::cout << "failed to load pics" << std::endl;
+		std::cout << "failed to load pic" << std::endl;
 	}
 }
 
@@ -37,15 +26,15 @@ Texture::Texture(const char *path) :
 void Texture::setUp()
 {
     glGenTextures(1, &tbo);
-    glActiveTexture(GL_TEXTURE0);
+    //glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, tbo);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA32F, width, height, 0, 
-        GL_RGBA, GL_UNSIGNED_BYTE, data);
 
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, width, height, 0, 
+        GL_RGBA, GL_UNSIGNED_BYTE, data);
 
     glBindTexture(GL_TEXTURE_2D, 0);
 }
