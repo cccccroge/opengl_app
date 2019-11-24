@@ -1,5 +1,11 @@
 #include "Model.h"
 #include "../utils.h"
+#include "assimp/Importer.hpp"
+#include "assimp/scene.h"
+#include "assimp/postprocess.h"
+#include <iostream>
+#include "../internal_data/Vertex.h"
+
 
 Model::Model() : SceneObject(glm::vec3(0.0f, 0.0f, 0.0f))
 {
@@ -7,74 +13,102 @@ Model::Model() : SceneObject(glm::vec3(0.0f, 0.0f, 0.0f))
 }
 
 
-Model::Model(const char *obj_file, glm::vec3 pos) : SceneObject(pos), 
-	m_shape(Shape())
+Model::Model(const std::string obj_file, 
+	glm::vec3 pos /*= glm::vec3(0.0f, 0.0f, 0.0f)*/) : SceneObject(pos)
 {
-	// Load to tinyobj format
-	std::vector<tinyobj::shape_t> shapes;
-	std::vector<tinyobj::material_t> materials;
-    std::string err;
-	tinyobj::LoadObj(shapes, materials, err, obj_file);
+	Assimp::Importer importer;
+	const aiScene *scene = importer.ReadFile(obj_file, 
+		aiProcess_Triangulate | aiProcess_FlipUVs | aiProcess_GenNormals);
 
-	if(err.size()>0)
-	{
-		printf("Load Models Fail! Please check the solution path\n");
+	if (!scene || 
+		scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE ||
+		!scene->mRootNode) {
+		std::cout << "ERROR::ASSIMP::" << 
+			importer.GetErrorString() << std::endl;
 		return;
 	}
-	
-	printf("Load Models Success ! Shapes size %d Maerial size %d\n", shapes.size(), materials.size());
 
-	// Setup vertex specification
-	for(int i = 0; i < shapes.size(); i++)
-	{
-		glGenVertexArrays(1, &m_shape.vao);
-		glBindVertexArray(m_shape.vao);
+	directory = obj_file.substr(0, obj_file.find_last_of('/') + 1);
 
-		glGenBuffers(1, &m_shape.vbo);
-		glGenBuffers(1, &m_shape.p_normal);
-		glGenBuffers(1, &m_shape.vboTex);
-		glGenBuffers(1, &m_shape.ebo);
-		
-		glBindBuffer(GL_ARRAY_BUFFER, m_shape.vbo);
-		glBufferData(GL_ARRAY_BUFFER, shapes[i].mesh.positions.size() * sizeof(float), 
-			&shapes[i].mesh.positions[0], GL_STATIC_DRAW);
-		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0);
+	processNode(scene, scene->mRootNode);
+}
 
-		glBindBuffer(GL_ARRAY_BUFFER, m_shape.vboTex);
-		glBufferData(GL_ARRAY_BUFFER, shapes[i].mesh.texcoords.size() * sizeof(float), shapes[i].mesh.texcoords.data(), GL_STATIC_DRAW);
-		glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 0, 0);
 
-		glBindBuffer(GL_ARRAY_BUFFER, m_shape.p_normal);
-		glBufferData(GL_ARRAY_BUFFER, shapes[i].mesh.normals.size() * sizeof(float), shapes[i].mesh.normals.data(), GL_STATIC_DRAW);
-		glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, 0, 0);
-
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_shape.ebo);
-		glBufferData(GL_ELEMENT_ARRAY_BUFFER, shapes[i].mesh.indices.size() * sizeof(unsigned int), shapes[i].mesh.indices.data(), GL_STATIC_DRAW);
-		m_shape.materialId = shapes[i].mesh.material_ids[0];
-		m_shape.indexCount = shapes[i].mesh.indices.size();
-
-		glEnableVertexAttribArray(0);
-		glEnableVertexAttribArray(1);
-		glEnableVertexAttribArray(2);
+void Model::processNode(const aiScene *scene, const aiNode *node)
+{
+	for (int i = 0; i < node->mNumMeshes; ++i) {
+		Mesh m = convertMesh(scene, scene->mMeshes[node->mMeshes[i]]);
+		m.setUp();
+		meshes.push_back(m);
 	}
 
-	texture_data tdata = load_png("assets/myManDiffuse.png");	// TODO: add texture path
-
-	glGenTextures( 1, &m_shape.m_texture );
-	glBindTexture( GL_TEXTURE_2D, m_shape.m_texture);
-
-	glTexImage2D( GL_TEXTURE_2D, 0, GL_RGBA32F, tdata.width, tdata.height, 0, GL_RGBA, GL_UNSIGNED_BYTE, tdata.data);
-	glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE );
-	glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE );
-	glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR );
-	glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR );
+	for (int i = 0; i < node->mNumChildren; ++i) {
+		processNode(scene, node->mChildren[i]);
+	}
 }
 
-void Model::bind()
+
+Mesh Model::convertMesh(const aiScene *scene, const aiMesh *mesh)
 {
-	glBindVertexArray(m_shape.vao);
+	Mesh targetMesh;
+	
+	// retrieve vertex data
+	for (int i = 0; i < mesh->mNumVertices; ++i) {
+		aiVector3D &v = mesh->mVertices[i];
+		aiVector3D &n = mesh->mNormals[i];
+		aiVector3D *t = (mesh->mTextureCoords[0]) ? 
+			&mesh->mTextureCoords[0][i] : NULL;
+
+		glm::vec3 pos(v.x, v.y, v.z);
+		glm::vec3 normal(n.x, n.y, n.z);
+		glm::vec2 texCoord = t ? 
+			glm::vec2(t->x, t->y) : glm::vec2(0.0f, 0.0f);
+
+		Vertex vertex(pos, normal, texCoord);
+		targetMesh.getVertices().push_back(vertex);
+	}
+
+	// retrieve index data
+	for (int i = 0; i < mesh->mNumFaces; ++i) {
+		aiFace face = mesh->mFaces[i];
+		for (int j = 0; j < face.mNumIndices; ++j) {
+			targetMesh.getIndices().push_back(face.mIndices[j]);
+		}
+	}
+
+	// retrieve texture data
+	if (mesh->mMaterialIndex >= 0) {
+		aiMaterial *mat = scene->mMaterials[mesh->mMaterialIndex];
+
+		for (int i = 0; i < mat->
+			GetTextureCount(aiTextureType_DIFFUSE); ++i) {
+			aiString str;
+			mat->GetTexture(aiTextureType_DIFFUSE, i, &str);
+
+			bool found = false;
+			for (int j = 0; j < textures_loaded.size(); ++j) {
+				// found in cache
+				if (std::string(textures_loaded[j].getPath()) == 
+					directory + std::string(str.C_Str())) {
+					targetMesh.getTextures().push_back(
+						textures_loaded[j]);
+					found = true;
+					std::cout << "Creating texture: found in cache" << std::endl;
+					break;
+				}
+			}
+
+			// not found in cache
+			if (!found) {
+				Texture tex((directory + std::string(str.C_Str())).c_str());
+				targetMesh.getTextures().push_back(tex);
+				textures_loaded.push_back(tex);
+				std::cout << "Creating texture: not in cache" << std::endl;
+			}
+		}
+	}
+
+	return targetMesh;
 }
-
-
 
 

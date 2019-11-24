@@ -19,16 +19,8 @@
 
 ShaderProgram* global::program;
 Renderer* global::renderer;
-Model* global::Torso;
-Model* global::Head;
-Model* global::Arm_R1;
-Model* global::Arm_R2;
-Model* global::Arm_L1;
-Model* global::Arm_L2;
-Model* global::Leg_R1;
-Model* global::Leg_R2;
-Model* global::Leg_L1;
-Model* global::Leg_L2;
+Model* global::Palace;
+
 
 void setupRendering()
 {
@@ -41,52 +33,8 @@ void setupRendering()
 	global::program->compile();
    
 	// setup modeles
-	global::Torso = new Model("assets/Torso.obj");
-	global::Torso->translate(glm::vec3(0.0f, 2.7361f, 0.0f));	// global pos, copy from blender
-
-	global::Head = new Model("assets/Head.obj");
-	global::Head->translate(glm::vec3(0.0f, 5.1385f, 0.0f));
-
-	global::Arm_R1 = new Model("assets/Arm_R1.obj");
-	global::Arm_R1->translate(glm::vec3(1.1264f, 4.6385f, 0.0f));
-
-	global::Arm_R2 = new Model("assets/Arm_R2.obj");
-	global::Arm_R2->translate(glm::vec3(1.56f, 4.1143f, 0.0f));
-
-	global::Arm_L1 = new Model("assets/Arm_L1.obj");
-	global::Arm_L1->translate(glm::vec3(-1.1264f, 4.6385f, 0.0f));
-
-	global::Arm_L2 = new Model("assets/Arm_L2.obj");
-	global::Arm_L2->translate(glm::vec3(-1.56f, 4.1143f, 0.0f));
-
-	global::Leg_R1 = new Model("assets/Leg_R1.obj");
-	global::Leg_R1->translate(glm::vec3(0.56001f, 2.6803f, 0.0f));
-
-	global::Leg_R2 = new Model("assets/Leg_R2.obj");
-	global::Leg_R2->translate(glm::vec3(0.56001f, 1.3538f, 0.0f));
-
-	global::Leg_L1 = new Model("assets/Leg_L1.obj");
-	global::Leg_L1->translate(glm::vec3(-0.56001f, 2.6803f, 0.0f));
-
-	global::Leg_L2 = new Model("assets/Leg_L2.obj");
-	global::Leg_L2->translate(glm::vec3(-0.56001f, 1.3538f, 0.0f));
-
-	// specify relationship
-	global::Head->setParent(*global::Torso);
-	global::Arm_R1->setParent(*global::Torso);
-	global::Arm_L1->setParent(*global::Torso);
-	global::Leg_R1->setParent(*global::Torso);
-	global::Leg_L1->setParent(*global::Torso);
-
-	global::Arm_R2->setParent(*global::Arm_R1);
-	global::Arm_L2->setParent(*global::Arm_L1);
-	global::Leg_R2->setParent(*global::Leg_R1);
-	global::Leg_L2->setParent(*global::Leg_L1);
-
-	// test if parent work
-/* 	global::Torso->rotate(15, std::vector<float>({ 1.0f, 0.0f, 0.0f }));
-	global::Arm_R1->rotate(30, std::vector<float>({ 1.0f, 0.0f, 0.0f }));
-	global::Arm_R2->rotate(45, std::vector<float>({ 1.0f, 0.0f, 0.0f })); */
+	global::Palace = new Model("assets/myman/myMan.obj");
+	//global::Palace = new Model("assets/sibenik/sibenik.obj");
 
 	// setup camera
 	global::camViewport = Camera(PROJECTION_TYPE::PERSPECTIVE, 
@@ -95,20 +43,9 @@ void setupRendering()
 
 	// send to renderer
 	global::renderer = new Renderer();
-	global::renderer->addModel(*global::Arm_R1);
-	global::renderer->addModel(*global::Arm_R2);
-	global::renderer->addModel(*global::Arm_L1);
-	global::renderer->addModel(*global::Arm_L2);
-	global::renderer->addModel(*global::Leg_R1);
-	global::renderer->addModel(*global::Leg_R2);
-	global::renderer->addModel(*global::Leg_L1);
-	global::renderer->addModel(*global::Leg_L2);
-	global::renderer->addModel(*global::Torso);
-	global::renderer->addModel(*global::Head);
-	
-	global::renderer->setCamera(global::camViewport);
+	global::renderer->addModel(*global::Palace);
 
-	printGLError();
+	global::renderer->setCamera(global::camViewport);
 }
 
 
@@ -132,8 +69,7 @@ int main(int argc, char *argv[])
 
 	// MainLoop ends here, free mem.
 	std::cout << "Return control from main loop." << std::endl;
-	delete global::Torso;
-	delete global::Head;
+	delete global::Palace;
 
 	return 0;
 }

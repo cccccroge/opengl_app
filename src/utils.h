@@ -15,15 +15,6 @@ std::string file2String(const std::string &path);
 char* file2Cstring(const char *path);
 
 
-typedef struct _texture_data
-{
-	_texture_data() : width(0), height(0), data(0) {}
-	int width;
-	int height;
-	unsigned char* data;
-} texture_data;
-
-texture_data load_png(const char* path);
 
 inline void exitProgram(void)
 {

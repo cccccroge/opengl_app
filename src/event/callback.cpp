@@ -59,6 +59,7 @@ void onMenuTriggered(int id)
 void onDisplayRefresh(void)
 {
 	global::renderer->RenderAll();
+	//printGLError();
 }
 
 

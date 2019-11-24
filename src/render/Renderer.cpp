@@ -46,12 +46,12 @@ void Renderer::RenderAll()
         glm::mat4 proj = (*m_camera).getProjMat();
         global::program->setUniformMat4("um4mvp", proj * view * model);
 
-        // bind object
-        (*modelPtr).bind();
-
-        // issue draw call
-        GLsizei count = (*modelPtr).getShape().indexCount;
-	    glDrawElements(GL_TRIANGLES, count, GL_UNSIGNED_INT, 0);
+        // bind mesh and draw
+        for (auto mesh : modelPtr->getMeshes()) {
+            mesh.bind(*global::program, "tex");
+	        glDrawElements(GL_TRIANGLES, mesh.getIndices().size(), 
+                GL_UNSIGNED_INT, 0);
+        }
 	}
 
     glutSwapBuffers();

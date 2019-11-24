@@ -16,16 +16,7 @@ namespace global
     extern GlutTimer timer;
     extern ShaderProgram *program;
 
-    extern Model *Torso;
-    extern Model *Head;
-    extern Model *Arm_R1;
-    extern Model *Arm_R2;
-    extern Model *Arm_L1;
-    extern Model *Arm_L2;
-    extern Model *Leg_R1;
-    extern Model *Leg_R2;
-    extern Model *Leg_L1;
-    extern Model *Leg_L2;
+    extern Model *Palace;
 
     extern Camera camViewport;
     extern Renderer *renderer;

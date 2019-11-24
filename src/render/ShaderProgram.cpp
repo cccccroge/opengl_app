@@ -65,3 +65,9 @@ void ShaderProgram::setUniformMat4(const char *name, glm::mat4 matrix)
 {
     glUniformMatrix4fv(getUniform(name), 1, false, glm::value_ptr(matrix));
 }
+
+
+void ShaderProgram::setUniform1i(const char *name, GLint val)
+{
+    glUniform1i(getUniform(name), val);
+}

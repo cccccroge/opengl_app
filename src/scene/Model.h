@@ -7,33 +7,29 @@
 #include "SceneObject.h"
 #include "Camera.h"
 #include <vector>
-
-
-class Shape
-{
-public:
-	GLuint vao;			// vertex array object
-	GLuint vbo;			// vertex buffer object
-	GLuint vboTex;		// vertex buffer object of texture
-	GLuint ebo;			
-
-	GLuint p_normal;
-	int materialId;
-	int indexCount;
-	GLuint m_texture;
-};
+#include <string>
+#include "../internal_data/Mesh.h"
+#include "assimp/scene.h"
+#include "../internal_data/Texture.h"
 
 
 class Model : public SceneObject
 {
 public:
 	Model();
-    Model(const char *obj_file, 
+    Model(const std::string obj_file, 
 		glm::vec3 pos = glm::vec3(0.0f, 0.0f, 0.0f));
-	void bind();
 
-	inline Shape& getShape() { return m_shape; }
+	inline std::vector<Mesh>& getMeshes() { return meshes; }
 
 private:
-    Shape m_shape;
+	void processNode(const aiScene *scene, const aiNode *node);
+	Mesh convertMesh(const aiScene *scene, const aiMesh *mesh);
+
+private:
+	std::vector<Mesh> meshes;
+	// where .obj & texture files located, including a '/' as tail
+	std::string directory;
+
+	std::vector<Texture> textures_loaded;
 };

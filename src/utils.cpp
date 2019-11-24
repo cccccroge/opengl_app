@@ -1,7 +1,5 @@
 #include "utils.h"
 #include <iostream>
-#define STB_IMAGE_IMPLEMENTATION
-#include "STB/stb_image.h"
 #include "freeGLUT/freeglut.h"
 #include "GLM/glm_996/glm.hpp"
 #include <string>
@@ -91,33 +89,6 @@ void printGLError()
     }
 }
 
-texture_data load_png(const char* path)
-{
-    texture_data texture;
-	int n;
-	stbi_uc *data = stbi_load(path, &texture.width, &texture.height, &n, 4);
-	if(data != NULL)
-	{
-		texture.data = new unsigned char[texture.width * texture.height * 4 * sizeof(unsigned char)];
-		memcpy(texture.data, data, texture.width * texture.height * 4 * sizeof(unsigned char));
-		// vertical-mirror image data
-		for (size_t i = 0; i < texture.width; i++)
-		{
-			for (size_t j = 0; j < texture.height / 2; j++)
-			{
-				for(size_t k = 0; k < 4; k++) {
-					std::swap(texture.data[(j * texture.width + i) * 4 + k], texture.data[((texture.height - j - 1) * texture.width + i) * 4 + k]);
-				}
-			}
-		}
-		stbi_image_free(data);
-	}
-	else {
-		std::cout << "failed to load pics" << std::endl;
-	}
-    return texture;
-}
-
 
 std::string file2String(const std::string &path)
 {
@@ -189,32 +160,32 @@ void GlutTimer::expired(int value)
 
 		if (GlutTimer::animated) {
 			// hard-code animation
-			global::Torso->translate(0.0f, 0.025f, 0.0f);
-			global::Head->rotate(0.5f, std::vector<float>({ 1.0f, 0.0f, 0.0f }));
-			global::Arm_R1->rotate(0.6f, std::vector<float>({ 1.0f, 0.0f, 0.0f }));
-			global::Arm_R2->rotate(0.5f, std::vector<float>({ 1.0f, 0.0f, 0.0f }));
-			global::Arm_L1->rotate(-0.4f, std::vector<float>({ 0.0f, 0.0f, 1.0f }));
-			global::Arm_L2->rotate(0.6f, std::vector<float>({ 0.0f, 0.0f, 1.0f }));
-			global::Leg_R1->rotate(-0.1f, std::vector<float>({ 1.0f, 0.0f, 0.0f }));
-			global::Leg_R1->rotate(0.1f, std::vector<float>({ 0.0f, 0.0f, 1.0f }));
-			global::Leg_R2->rotate(-0.2f, std::vector<float>({ 1.0f, 0.0f, 0.0f }));
-			global::Leg_L1->rotate(-0.1f, std::vector<float>({ 1.0f, 0.0f, 0.0f }));
-			global::Leg_L1->rotate(-0.1f, std::vector<float>({ 0.0f, 0.0f, 1.0f }));
-			global::Leg_L2->rotate(-0.2f, std::vector<float>({ 1.0f, 0.0f, 0.0f }));
+			// global::Torso->translate(0.0f, 0.025f, 0.0f);
+			// global::Head->rotate(0.5f, std::vector<float>({ 1.0f, 0.0f, 0.0f }));
+			// global::Arm_R1->rotate(0.6f, std::vector<float>({ 1.0f, 0.0f, 0.0f }));
+			// global::Arm_R2->rotate(0.5f, std::vector<float>({ 1.0f, 0.0f, 0.0f }));
+			// global::Arm_L1->rotate(-0.4f, std::vector<float>({ 0.0f, 0.0f, 1.0f }));
+			// global::Arm_L2->rotate(0.6f, std::vector<float>({ 0.0f, 0.0f, 1.0f }));
+			// global::Leg_R1->rotate(-0.1f, std::vector<float>({ 1.0f, 0.0f, 0.0f }));
+			// global::Leg_R1->rotate(0.1f, std::vector<float>({ 0.0f, 0.0f, 1.0f }));
+			// global::Leg_R2->rotate(-0.2f, std::vector<float>({ 1.0f, 0.0f, 0.0f }));
+			// global::Leg_L1->rotate(-0.1f, std::vector<float>({ 1.0f, 0.0f, 0.0f }));
+			// global::Leg_L1->rotate(-0.1f, std::vector<float>({ 0.0f, 0.0f, 1.0f }));
+			// global::Leg_L2->rotate(-0.2f, std::vector<float>({ 1.0f, 0.0f, 0.0f }));
 
-			if (GlutTimer::CurrentSec() >= 3) {
-				GlutTimer::ResetCount();
-				global::Torso->resetTransformation();
-				global::Head->resetTransformation();
-				global::Arm_R1->resetTransformation();
-				global::Arm_R2->resetTransformation();
-				global::Arm_L1->resetTransformation();
-				global::Arm_L2->resetTransformation();
-				global::Leg_R1->resetTransformation();
-				global::Leg_R2->resetTransformation();
-				global::Leg_L1->resetTransformation();
-				global::Leg_L2->resetTransformation();
-			}
+			// if (GlutTimer::CurrentSec() >= 3) {
+			// 	GlutTimer::ResetCount();
+			// 	global::Torso->resetTransformation();
+			// 	global::Head->resetTransformation();
+			// 	global::Arm_R1->resetTransformation();
+			// 	global::Arm_R2->resetTransformation();
+			// 	global::Arm_L1->resetTransformation();
+			// 	global::Arm_L2->resetTransformation();
+			// 	global::Leg_R1->resetTransformation();
+			// 	global::Leg_R2->resetTransformation();
+			// 	global::Leg_L1->resetTransformation();
+			// 	global::Leg_L2->resetTransformation();
+			// }
 		}
 	}
 }

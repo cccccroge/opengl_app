@@ -14,6 +14,7 @@ public:
     bool compile();
     void bind();
     void setUniformMat4(const char *name, glm::mat4 matrix);
+    void setUniform1i(const char *name, GLint val);
 
 private:
     GLint getUniform(const char *name);
