@@ -1,4 +1,5 @@
 #include "Mesh.h"
+#include <iostream>
 
 Mesh::Mesh() : vao(0), vbo(0), ebo(0)
 {
@@ -44,6 +45,7 @@ void Mesh::setUp()
 
 void Mesh::bind(ShaderProgram &program, const std::string tex_prefix)
 {
+    //std::cout << "binding textures: " << textures.size() << " x" << std::endl;
     for (int i = 0; i < textures.size(); ++i) {
         textures[i].bind(program, tex_prefix, i);
     }

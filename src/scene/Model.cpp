@@ -1,7 +1,6 @@
 #include "Model.h"
 #include "../utils.h"
 #include "assimp/Importer.hpp"
-#include "assimp/scene.h"
 #include "assimp/postprocess.h"
 #include <iostream>
 #include "../internal_data/Vertex.h"
@@ -18,7 +17,7 @@ Model::Model(const std::string obj_file,
 {
 	Assimp::Importer importer;
 	const aiScene *scene = importer.ReadFile(obj_file, 
-		aiProcess_Triangulate | aiProcess_FlipUVs | aiProcess_GenNormals);
+		aiProcess_Triangulate | aiProcess_GenNormals);
 
 	if (!scene || 
 		scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE ||
@@ -84,26 +83,30 @@ Mesh Model::convertMesh(const aiScene *scene, const aiMesh *mesh)
 			GetTextureCount(aiTextureType_DIFFUSE); ++i) {
 			aiString str;
 			mat->GetTexture(aiTextureType_DIFFUSE, i, &str);
+			// convert to relative path if is absolute
+			std::string current(str.C_Str());
+			std::size_t absolute = current.find_last_of('/');
+			if (absolute != std::string::npos) {
+				current = current.substr(absolute + 1);
+			}
 
 			bool found = false;
 			for (int j = 0; j < textures_loaded.size(); ++j) {
 				// found in cache
 				if (std::string(textures_loaded[j].getPath()) == 
-					directory + std::string(str.C_Str())) {
+					directory + current) {
 					targetMesh.getTextures().push_back(
 						textures_loaded[j]);
 					found = true;
-					std::cout << "Creating texture: found in cache" << std::endl;
 					break;
 				}
 			}
 
 			// not found in cache
 			if (!found) {
-				Texture tex((directory + std::string(str.C_Str())).c_str());
+				Texture tex((directory + current).c_str());
 				targetMesh.getTextures().push_back(tex);
 				textures_loaded.push_back(tex);
-				std::cout << "Creating texture: not in cache" << std::endl;
 			}
 		}
 	}

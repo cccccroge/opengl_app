@@ -7,6 +7,7 @@
 Texture::Texture(const char *path) : 
     width(0), height(0), data(NULL), type(""), path(path)
 {
+	std::cout << "construct Texture: " << std::string(path) << std::endl;
 	int n;
 	stbi_uc *_data = stbi_load(path, &width, &height, &n, 4);
 	if(_data != NULL)

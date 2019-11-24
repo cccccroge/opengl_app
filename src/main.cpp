@@ -3,9 +3,6 @@
 
 #include "GLM/glm_996/vec3.hpp"
 
-#define TINYOBJLOADER_IMPLEMENTATION
-#include "TinyOBJ/tiny_obj_loader.h"
-
 #include "global.h"
 #include "utils.h"
 #include "init.h"
@@ -33,8 +30,8 @@ void setupRendering()
 	global::program->compile();
    
 	// setup modeles
-	global::Palace = new Model("assets/myman/myMan.obj");
-	//global::Palace = new Model("assets/sibenik/sibenik.obj");
+	//global::Palace = new Model("assets/myman/myMan.obj");
+	global::Palace = new Model("assets/lost_empire/lost_empire.obj");
 
 	// setup camera
 	global::camViewport = Camera(PROJECTION_TYPE::PERSPECTIVE, 
