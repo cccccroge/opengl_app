@@ -37,7 +37,6 @@ void createMenu(void)
 
 	glutSetMenu(menu_main);
 	glutAddSubMenu("Timer", menu_timer);
-	glutAddMenuEntry("Comparison Bar", MENU_COMPARISON_BAR);
 	glutAddSubMenu("Shader", menu_shader);
 	glutAddMenuEntry("Exit", MENU_EXIT);
 

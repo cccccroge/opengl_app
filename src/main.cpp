@@ -11,12 +11,14 @@
 #include "render/ShaderProgram.h"
 #include "scene/Camera.h"
 #include "render/Renderer.h"
+#include "render/FrameBuffer.h"
 
 #include <iostream>
 
 ShaderProgram* global::program;
-ShaderProgram* global::program_flat;
-ShaderProgram* global::program_normal_as_color;
+ShaderProgram* global::program_first;
+ShaderProgram* global::program_second;
+FrameBuffer* global::postEffectBuffer;
 Renderer* global::renderer;
 Model* global::Palace;
 
@@ -24,23 +26,28 @@ Model* global::Palace;
 void setupRendering()
 {
 	// setup shader program
-	Shader vertexShader = Shader(GL_VERTEX_SHADER, "assets/vertex.vs.glsl");
+	Shader vertexShader_first = Shader(GL_VERTEX_SHADER, "assets/vertex_first.vs.glsl");
+	Shader fragmentShader_first = Shader(GL_FRAGMENT_SHADER, "assets/fragment_first.fs.glsl");
+	global::program_first = new ShaderProgram();
+	global::program_first->addShader(vertexShader_first);
+	global::program_first->addShader(fragmentShader_first);
+	global::program_first->compile();
 
-	Shader fragmentShader_flat = Shader(GL_FRAGMENT_SHADER, "assets/fragment_flat.fs.glsl");
-	global::program_flat = new ShaderProgram();
-	global::program_flat->addShader(vertexShader);
-	global::program_flat->addShader(fragmentShader_flat);
-	global::program_flat->compile();
+	Shader vertexShader_second = Shader(GL_VERTEX_SHADER, "assets/vertex_second.vs.glsl");
+	Shader fragmentShader_second = Shader(GL_FRAGMENT_SHADER, "assets/fragment_second.fs.glsl");
+	global::program_second = new ShaderProgram();
+	global::program_second->addShader(vertexShader_second);
+	global::program_second->addShader(fragmentShader_second);
+	global::program_second->compile();
 
-	Shader fragmentShader_normal_as_color = Shader(GL_FRAGMENT_SHADER, "assets/fragment_normal_as_color.fs.glsl");
-	global::program_normal_as_color = new ShaderProgram();
-	global::program_normal_as_color->addShader(vertexShader);
-	global::program_normal_as_color->addShader(fragmentShader_normal_as_color);
-	global::program_normal_as_color->compile();
-
-	global::program = global::program_flat;
+	
+	// setup shader variables
+	float comp_bar_xCoord = 0.5;
+	global::program = global::program_first;
+	global::program->bind();
+	global::program->setUniform1f("uf_comp_bar_xCoord", comp_bar_xCoord);
    
-	// setup modeles
+	// setup models
 	//global::Palace = new Model("assets/myman/myMan.obj");
 	global::Palace = new Model("assets/lost_empire/lost_empire.obj");
 
@@ -54,6 +61,10 @@ void setupRendering()
 	global::renderer->addModel(*global::Palace);
 
 	global::renderer->setCamera(global::camViewport);
+
+	// set up post effect buffer
+	global::postEffectBuffer = new FrameBuffer();
+	global::program_second->setUniform1i("screenTex", 0);
 }
 
 
@@ -77,10 +88,11 @@ int main(int argc, char *argv[])
 
 	// MainLoop ends here, free mem.
 	std::cout << "Return control from main loop." << std::endl;
-	delete global::program_flat;
-	delete global::program_normal_as_color;
+	delete global::program_first;
+	delete global::program_second;
 	delete global::Palace;
 	delete global::renderer;
+	delete global::postEffectBuffer;
 
 	return 0;
 }

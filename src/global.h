@@ -6,6 +6,7 @@
 #include "scene/Camera.h"
 #include "render/ShaderProgram.h"
 #include "render/Renderer.h"
+#include "render/FrameBuffer.h"
 
 #endif
 
@@ -14,9 +15,10 @@
 namespace global
 {
     extern GlutTimer timer;
-    extern ShaderProgram *program_flat;
-    extern ShaderProgram *program_normal_as_color;
+    extern ShaderProgram *program_first;
+    extern ShaderProgram *program_second;
     extern ShaderProgram *program;
+    extern FrameBuffer *postEffectBuffer;
 
     extern Model *Palace;
 

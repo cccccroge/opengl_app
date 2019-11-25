@@ -1,6 +1,7 @@
 #include "ShaderProgram.h"
 #include <iostream>
 #include "GLM/glm_996/gtc/type_ptr.hpp"
+#include "../utils.h"
 
 ShaderProgram::ShaderProgram()
 {
@@ -55,9 +56,20 @@ void ShaderProgram::bind()
 }
 
 
+void ShaderProgram::unbind()
+{
+    glUseProgram(0);
+}
+
+
 GLint ShaderProgram::getUniform(const char *name)
 {
-    return glGetUniformLocation(id, name);
+    GLint loc = glGetUniformLocation(id, name);
+    if (loc == -1) {
+        std::cout << "couldn't find uniform: " << std::string(name) << std::endl;
+    }
+
+    return  loc;
 }
 
 
@@ -70,4 +82,9 @@ void ShaderProgram::setUniformMat4(const char *name, glm::mat4 matrix)
 void ShaderProgram::setUniform1i(const char *name, GLint val)
 {
     glUniform1i(getUniform(name), val);
+}
+
+void ShaderProgram::setUniform1f(const char *name, GLfloat val)
+{
+    glUniform1f(getUniform(name), val);
 }

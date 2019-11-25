@@ -44,14 +44,21 @@ void onMenuTriggered(int id)
 	case MENU_EXIT:
 		exitProgram();
 		break;
-	case MENU_COMPARISON_BAR:
-		std::cout << "toggle comparison bar" << std::endl;
-		break;
 	case MENU_SHADER_FLAT:
-		global::program = global::program_flat;
+		global::program = global::program_first;
+		global::program->bind();
+		global::program->setUniform1i("ui_current_shader", 0);
+		global::program = global::program_second;
+		global::program->bind();
+		global::program->setUniform1i("ui_current_shader", 0);
 		break;
 	case MENU_SHADER_NORMAL_AS_COLOR:
-		global::program = global::program_normal_as_color;		
+		global::program = global::program_first;
+		global::program->bind();
+		global::program->setUniform1i("ui_current_shader", 1);
+		global::program = global::program_second;
+		global::program->bind();
+		global::program->setUniform1i("ui_current_shader", 1);
 		break;
 	default:
 		break;
@@ -68,8 +75,13 @@ void onDisplayRefresh(void)
 
 void onWindowReshaped(int width, int height)
 {
+	// update both CPU and GPU side
 	global::renderWidth = width;
 	global::renderHeight = height;
+	global::program->bind();
+	global::program->setUniform1i("ui_window_width", width);
+	global::program->setUniform1i("ui_window_height", height);
+
 	glViewport(0, 0, global::renderWidth, global::renderHeight);
 }
 

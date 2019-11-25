@@ -35,10 +35,14 @@ void Renderer::addModel(Model &model)
 
 void Renderer::RenderAll()
 {
-    // Clear display buffer
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    // first pass
+    global::postEffectBuffer->bind();
+    glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    glEnable(GL_DEPTH_TEST);
+	glDepthFunc(GL_LEQUAL);
 
-    // Bind Program
+    global::program = global::program_first;
     global::program->bind();
 
     for (auto modelPtr : model_vec) {
@@ -55,6 +59,18 @@ void Renderer::RenderAll()
                 GL_UNSIGNED_INT, 0);
         }
 	}
+
+    // second pass
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+    glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
+    glClear(GL_COLOR_BUFFER_BIT);
+    glDisable(GL_DEPTH_TEST);
+
+    global::program = global::program_second;
+    global::program->bind();
+    global::postEffectBuffer->useScreenVertexTexture();
+
+    glDrawArrays(GL_TRIANGLES, 0, 6);
 
     glutSwapBuffers();
 	//printGLError();

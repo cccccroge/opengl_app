@@ -45,6 +45,7 @@ void Texture::bind(ShaderProgram &program, const std::string tex_prefix,
 {
     glActiveTexture(GL_TEXTURE0 + index);
 	glBindTexture(GL_TEXTURE_2D, tbo);
+	program.bind();
 	program.setUniform1i(
 		(tex_prefix + std::to_string(index)).c_str(), 
 		(GLint)index);

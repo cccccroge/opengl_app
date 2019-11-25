@@ -13,8 +13,10 @@ public:
     void addShader(Shader &shader);
     bool compile();
     void bind();
+    void unbind();
     void setUniformMat4(const char *name, glm::mat4 matrix);
     void setUniform1i(const char *name, GLint val);
+    void setUniform1f(const char *name, GLfloat val);
 
 private:
     GLint getUniform(const char *name);
