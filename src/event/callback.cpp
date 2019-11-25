@@ -45,20 +45,16 @@ void onMenuTriggered(int id)
 		exitProgram();
 		break;
 	case MENU_SHADER_FLAT:
-		global::program = global::program_first;
-		global::program->bind();
-		global::program->setUniform1i("ui_current_shader", 0);
-		global::program = global::program_second;
-		global::program->bind();
-		global::program->setUniform1i("ui_current_shader", 0);
+		global::program_first->bind();
+		global::program_first->setUniform1i("ui_current_shader", 0);
+		global::program_second->bind();
+		global::program_second->setUniform1i("ui_current_shader", 0);
 		break;
 	case MENU_SHADER_NORMAL_AS_COLOR:
-		global::program = global::program_first;
-		global::program->bind();
-		global::program->setUniform1i("ui_current_shader", 1);
-		global::program = global::program_second;
-		global::program->bind();
-		global::program->setUniform1i("ui_current_shader", 1);
+		global::program_first->bind();
+		global::program_first->setUniform1i("ui_current_shader", 1);
+		global::program_second->bind();
+		global::program_second->setUniform1i("ui_current_shader", 1);
 		break;
 	default:
 		break;
@@ -78,9 +74,12 @@ void onWindowReshaped(int width, int height)
 	// update both CPU and GPU side
 	global::renderWidth = width;
 	global::renderHeight = height;
-	global::program->bind();
-	global::program->setUniform1i("ui_window_width", width);
-	global::program->setUniform1i("ui_window_height", height);
+	global::program_first->bind();
+	global::program_first->setUniform1i("ui_window_width", width);
+	global::program_first->setUniform1i("ui_window_height", height);
+	global::program_second->bind();
+	global::program_second->setUniform1i("ui_window_width", width);
+	global::program_second->setUniform1i("ui_window_height", height);
 
 	glViewport(0, 0, global::renderWidth, global::renderHeight);
 }
@@ -210,6 +209,17 @@ void onMousePressed(int button, int state, int x, int y)
 					MOUSE_POS.x = x;
 					MOUSE_POS.y = y;
 				}
+
+				// check drag tool	// TODO: should combine to checkTool, but how?
+				if (keyStr == "mouse_L") {
+					if (global::comp_bar_xCoord < (x + COMP_BAR_WIDTH / 2) / global::renderWidth &&
+						global::comp_bar_xCoord > (x - COMP_BAR_WIDTH / 2) / global::renderWidth) {
+						toolMode = TOOL_MODE::DRAG_COMP_BAR;
+						// update mouse pos immediately, or it will be uninitialized
+						MOUSE_POS.x = x;
+						MOUSE_POS.y = y;
+					}
+				}
 			}
 		}
 
@@ -228,6 +238,11 @@ void onMousePressed(int button, int state, int x, int y)
 			button == GLUT_MIDDLE_BUTTON) {
 			checkTool("");			
 		}
+
+		if (toolMode == TOOL_MODE::DRAG_COMP_BAR &&
+			button == GLUT_LEFT_BUTTON) {
+			checkTool("");
+		}
 	}	
 }
 
@@ -236,7 +251,8 @@ void onMouseMoved(int x, int y)
 {
 	if (toolMode == TOOL_MODE::ORBIT || 
 		toolMode == TOOL_MODE::PAN ||
-		toolMode == TOOL_MODE::FIRST_PERSON) {
+		toolMode == TOOL_MODE::FIRST_PERSON ||
+		toolMode == TOOL_MODE::DRAG_COMP_BAR) {
 
 		onMouseMovedDelta(x - MOUSE_POS.x, y - MOUSE_POS.y);
 		MOUSE_POS.x = x;
@@ -255,6 +271,15 @@ void onMouseMovedDelta(int dx, int dy)
 	}
 	else if (toolMode == TOOL_MODE::FIRST_PERSON) {
 		global::camViewport.lookAround(dx, dy);
+	}
+	else if (toolMode == TOOL_MODE::DRAG_COMP_BAR) {
+		global::comp_bar_xCoord += (dx / global::renderWidth);
+		global::program_first->bind();
+		global::program_first->setUniform1f("uf_comp_bar_xCoord", 
+			global::comp_bar_xCoord);
+		global::program_second->bind();
+		global::program_second->setUniform1f("uf_comp_bar_xCoord", 
+			global::comp_bar_xCoord);
 	}
 }
 

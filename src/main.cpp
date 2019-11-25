@@ -15,7 +15,6 @@
 
 #include <iostream>
 
-ShaderProgram* global::program;
 ShaderProgram* global::program_first;
 ShaderProgram* global::program_second;
 FrameBuffer* global::postEffectBuffer;
@@ -42,10 +41,13 @@ void setupRendering()
 
 	
 	// setup shader variables
-	float comp_bar_xCoord = 0.5;
-	global::program = global::program_first;
-	global::program->bind();
-	global::program->setUniform1f("uf_comp_bar_xCoord", comp_bar_xCoord);
+	global::comp_bar_xCoord = 0.5;
+	global::program_first->bind();
+	global::program_first->setUniform1f("uf_comp_bar_xCoord", 
+		global::comp_bar_xCoord);
+	global::program_second->bind();
+	global::program_second->setUniform1f("uf_comp_bar_xCoord", 
+		global::comp_bar_xCoord);
    
 	// setup models
 	//global::Palace = new Model("assets/myman/myMan.obj");
@@ -64,6 +66,7 @@ void setupRendering()
 
 	// set up post effect buffer
 	global::postEffectBuffer = new FrameBuffer();
+	global::program_second->bind();
 	global::program_second->setUniform1i("screenTex", 0);
 }
 

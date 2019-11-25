@@ -42,19 +42,18 @@ void Renderer::RenderAll()
     glEnable(GL_DEPTH_TEST);
 	glDepthFunc(GL_LEQUAL);
 
-    global::program = global::program_first;
-    global::program->bind();
+    global::program_first->bind();
 
     for (auto modelPtr : model_vec) {
         // change MVP in program
         glm::mat4 model = (*modelPtr).getModelMat();
         glm::mat4 view = (*m_camera).getViewMat();
         glm::mat4 proj = (*m_camera).getProjMat();
-        global::program->setUniformMat4("um4mvp", proj * view * model);
+        global::program_first->setUniformMat4("um4mvp", proj * view * model);
 
         // bind mesh and draw
         for (auto mesh : modelPtr->getMeshes()) {
-            mesh.bind(*global::program, "tex");
+            mesh.bind(*global::program_first, "tex");
 	        glDrawElements(GL_TRIANGLES, mesh.getIndices().size(), 
                 GL_UNSIGNED_INT, 0);
         }
@@ -66,8 +65,7 @@ void Renderer::RenderAll()
     glClear(GL_COLOR_BUFFER_BIT);
     glDisable(GL_DEPTH_TEST);
 
-    global::program = global::program_second;
-    global::program->bind();
+    global::program_second->bind();
     global::postEffectBuffer->useScreenVertexTexture();
 
     glDrawArrays(GL_TRIANGLES, 0, 6);

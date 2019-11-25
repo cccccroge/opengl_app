@@ -17,7 +17,6 @@ namespace global
     extern GlutTimer timer;
     extern ShaderProgram *program_first;
     extern ShaderProgram *program_second;
-    extern ShaderProgram *program;
     extern FrameBuffer *postEffectBuffer;
 
     extern Model *Palace;
@@ -27,5 +26,7 @@ namespace global
 
     extern float renderWidth;
     extern float renderHeight;
+
+    extern float comp_bar_xCoord;
 }
 

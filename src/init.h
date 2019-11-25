@@ -25,6 +25,8 @@
 #define FIRST_PERSON_MOVE_SPEED 0.2f
 #define FIRST_PERSON_ROTATE_SPEED 0.4f
 
+#define COMP_BAR_WIDTH 5.0f
+
 /* --------------------------------------------------------------------
  * initGlutContext
  * Initialize freeGLUT and create a mainwindow as current context.
