@@ -11,6 +11,7 @@ Renderer::Renderer() : m_camera(NULL)
 	glDepthFunc(GL_LEQUAL);
     glEnable(GL_MULTISAMPLE);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC1_ALPHA);
+    //glEnable(GL_CULL_FACE);
 }
 
 

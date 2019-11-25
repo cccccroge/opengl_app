@@ -44,11 +44,14 @@ void onMenuTriggered(int id)
 	case MENU_EXIT:
 		exitProgram();
 		break;
-	case MENU_IDLE:
-		global::timer.animated = false;
+	case MENU_COMPARISON_BAR:
+		std::cout << "toggle comparison bar" << std::endl;
 		break;
-	case MENU_SUPERMAN:
-		global::timer.animated = true;
+	case MENU_SHADER_FLAT:
+		global::program = global::program_flat;
+		break;
+	case MENU_SHADER_NORMAL_AS_COLOR:
+		global::program = global::program_normal_as_color;		
 		break;
 	default:
 		break;
@@ -87,6 +90,9 @@ void onKeyboardPressed(unsigned char key, int x, int y)
 				// update mouse pos immediately, or it will be uninitialized
 				MOUSE_POS.x = x;
 				MOUSE_POS.y = y;
+			}
+			else if (toolMode == TOOL_MODE::TOGGLE_FULLSCREEN) {
+				glutFullScreenToggle();
 			}
 		}
 	}
@@ -136,6 +142,10 @@ void onKeyboardReleased(unsigned char key, int x, int y)
 		std::cout << str << " ";
 	}
 	std::cout << std::endl;
+
+	if (toolMode == TOOL_MODE::TOGGLE_FULLSCREEN && keyStr == "f") {
+		checkTool("");
+	}
 }
 
 
@@ -202,8 +212,8 @@ void onMousePressed(int button, int state, int x, int y)
 		}
 		std::cout << std::endl;
 
-		if (toolMode == TOOL_MODE::ORBIT || 
-			toolMode == TOOL_MODE::PAN) {
+		if ((toolMode == TOOL_MODE::ORBIT || toolMode == TOOL_MODE::PAN) &&
+			button == GLUT_MIDDLE_BUTTON) {
 			checkTool("");			
 		}
 	}	

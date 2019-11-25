@@ -13,8 +13,9 @@
 #define MENU_TIMER_START 1
 #define MENU_TIMER_STOP 2
 #define MENU_EXIT 3
-#define MENU_IDLE 4
-#define MENU_SUPERMAN 5
+#define MENU_SHADER_FLAT 4
+#define MENU_SHADER_NORMAL_AS_COLOR 5
+#define MENU_COMPARISON_BAR 6
 
 #define UP_VECTOR glm::vec3(0.0f, 1.0f, 0.0f)   // Y is up, consistent with OpenGL
     // TODO: make other vectors too, and replace somewhere else code

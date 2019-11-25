@@ -11,7 +11,8 @@ enum class TOOL_MODE {
 	ZOOM,
 	PAN,
 	ORBIT,
-	FIRST_PERSON
+	FIRST_PERSON,
+	TOGGLE_FULLSCREEN
 };
 
 /* map [Pair] to [TOOL_MODE] , each pair has a pressed button set

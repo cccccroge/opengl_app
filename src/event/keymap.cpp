@@ -15,6 +15,9 @@ std::map< std::pair<std::set<std::string>, std::string>, TOOL_MODE > keyMap = {
         {
             { { "shift_L" }, "F" }, TOOL_MODE::FIRST_PERSON
         },
+        {
+            { std::set<std::string>(), "f" }, TOOL_MODE::TOGGLE_FULLSCREEN
+        },
     };
 
 std::string btn2str(int GLUT_BUTTON)

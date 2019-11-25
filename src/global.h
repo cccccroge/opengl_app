@@ -14,6 +14,8 @@
 namespace global
 {
     extern GlutTimer timer;
+    extern ShaderProgram *program_flat;
+    extern ShaderProgram *program_normal_as_color;
     extern ShaderProgram *program;
 
     extern Model *Palace;

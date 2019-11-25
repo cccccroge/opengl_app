@@ -131,7 +131,11 @@ void Camera::lookAround(int xRight, int yDown)
     lookPosObj.rotatePivot(dy_down, rightDir, pivot);
     rightDirObj.rotatePivot(dx_right, UP_VECTOR, pivot);
     rightDirObj.rotatePivot(dy_down, rightDir, pivot);
-    upDirObj.rotatePivot(dx_right, UP_VECTOR, pivot);
+
+    // may cause precition problem: view will be wierd
+    if (!glm::all(glm::equal(getDirection('u'), UP_VECTOR))) {
+        upDirObj.rotatePivot(dx_right, UP_VECTOR, pivot);
+    }
     upDirObj.rotatePivot(dy_down, rightDir, pivot);
 }
 
