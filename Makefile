@@ -7,7 +7,7 @@ SRC		:= src
 RENDER  := src/render
 SCENE   := src/scene
 EVENT	:= src/event
-INTERNAL_DATA := src/internal_data
+MESH_DATA := src/mesh_data
 
 INCLUDE	:= include
 LIB     := lib

@@ -8,9 +8,9 @@
 #include "Camera.h"
 #include <vector>
 #include <string>
-#include "../internal_data/Mesh.h"
+#include "../mesh_data/Mesh.h"
 #include "assimp/scene.h"
-#include "../internal_data/Texture.h"
+#include "../mesh_data/Texture.h"
 
 
 class Model : public SceneObject

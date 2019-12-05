@@ -3,7 +3,7 @@
 #include "assimp/Importer.hpp"
 #include "assimp/postprocess.h"
 #include <iostream>
-#include "../internal_data/Vertex.h"
+#include "../mesh_data/Vertex.h"
 
 
 Model::Model() : SceneObject(glm::vec3(0.0f, 0.0f, 0.0f))
