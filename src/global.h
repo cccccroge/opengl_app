@@ -6,7 +6,7 @@
 #include "scene/Camera.h"
 #include "render/ShaderProgram.h"
 #include "render/Renderer.h"
-#include "render/FrameBuffer.h"
+#include "render/PostEffectBuffer.h"
 
 #endif
 
@@ -17,7 +17,7 @@ namespace global
     extern GlutTimer timer;
     extern ShaderProgram *program_first;
     extern ShaderProgram *program_second;
-    extern FrameBuffer *postEffectBuffer;
+    extern PostEffectBuffer *postEffectBuffer;
 
     extern Model *Palace;
 

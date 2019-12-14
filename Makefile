@@ -22,7 +22,7 @@ run: clean all
 	clear
 	./$(BIN)/$(EXECUTABLE)
 
-$(BIN)/$(EXECUTABLE): $(SRC)/*.cpp $(RENDER)/*.cpp $(SCENE)/*.cpp $(EVENT)/*.cpp $(INTERNAL_DATA)/*.cpp
+$(BIN)/$(EXECUTABLE): $(SRC)/*.cpp $(RENDER)/*.cpp $(SCENE)/*.cpp $(EVENT)/*.cpp $(MESH_DATA)/*.cpp
 	$(CXX) $(CXX_FLAGS) -I$(INCLUDE) -L$(LIB) $^ -o $@ $(LIBRARIES)
 
 clean:

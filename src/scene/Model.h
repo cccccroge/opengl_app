@@ -19,17 +19,18 @@ public:
 	Model();
     Model(const std::string obj_file, 
 		glm::vec3 pos = glm::vec3(0.0f, 0.0f, 0.0f));
+	~Model();
 
-	inline std::vector<Mesh>& getMeshes() { return meshes; }
+	inline std::vector<Mesh*>& getMeshes() { return meshes; }
 
 private:
 	void processNode(const aiScene *scene, const aiNode *node);
-	Mesh convertMesh(const aiScene *scene, const aiMesh *mesh);
+	Mesh* convertMesh(const aiScene *scene, const aiMesh *mesh);
 
 private:
-	std::vector<Mesh> meshes;
+	std::vector<Mesh*> meshes;
 	// where .obj & texture files located, including a '/' as tail
 	std::string directory;
 
-	std::vector<Texture> textures_loaded;
+	std::vector<Texture*> textures_loaded;
 };

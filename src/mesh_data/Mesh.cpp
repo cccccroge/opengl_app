@@ -1,54 +1,55 @@
 #include "Mesh.h"
 #include <iostream>
+#include "../utils.h"
 
-Mesh::Mesh() : vao(0), vbo(0), ebo(0)
+Mesh::Mesh() : vertex_arr()
 {
     // we can't call setUp() unitil assimp importer
     // from model get the actual data
 }
 
-
-void Mesh::setUp()
+Mesh::Mesh(std::vector<VertexP2T> &vertices)
 {
-    glGenVertexArrays(1, &vao);
-    glBindVertexArray(vao);
+    vertex_arr = new VertexArray(vertices);
+}
 
-    // Vertex
-    glGenBuffers(1, &vbo);
-    glBindBuffer(GL_ARRAY_BUFFER, vbo);
-    glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(Vertex),
-        &vertices[0], GL_STATIC_DRAW);
-    //glBindBuffer(GL_ARRAY_BUFFER, 0);
+Mesh::Mesh(std::vector<VertexPNT> &vertices, std::vector<GLuint> &indices)
+{
+    vertex_arr = new VertexArray(vertices, indices);
+}
 
-    /* For now, assume each vertex has fixed format:
-   [position(vec3), normal(vec3), textCoord(vec2)] */
-    glEnableVertexAttribArray(0);
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), 
-        (const void *)0);
-    glEnableVertexAttribArray(1);
-    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), 
-        (const void *)(3* sizeof(float)));
-    glEnableVertexAttribArray(2);
-    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), 
-        (const void *)(6* sizeof(float)));
+Mesh::~Mesh()
+{
+    // note: no need to delete texture element, we will delete them in Model's cache
+    textures.clear();
 
-    // Index
-    glGenBuffers(1, &ebo);
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(GLuint),
-        &indices[0], GL_STATIC_DRAW);
-    //glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-
-    glBindVertexArray(0);
+    if (vertex_arr != NULL) {
+        delete vertex_arr;
+        vertex_arr = NULL;
+    }
 }
 
 
+/* used for assimp loading */
+void Mesh::setUp()
+{
+    vertex_arr = new VertexArray(verticesPNT, indices);
+}
+
+
+/* bind textures and vao */
 void Mesh::bind(ShaderProgram &program, const std::string tex_prefix)
 {
     //std::cout << "binding textures: " << textures.size() << " x" << std::endl;
     for (int i = 0; i < textures.size(); ++i) {
-        textures[i].bind(program, tex_prefix, i);
+        textures[i]->bind(program, tex_prefix, i);
     }
+    vertex_arr->bind();
+}
 
-    glBindVertexArray(vao);
+
+/* only bind vao (when there's no texture in this mesh) */
+void Mesh::bind()
+{
+    vertex_arr->bind();
 }

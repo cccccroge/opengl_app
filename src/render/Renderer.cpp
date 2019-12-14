@@ -36,7 +36,7 @@ void Renderer::addModel(Model &model)
 void Renderer::RenderAll()
 {
     // first pass
-    global::postEffectBuffer->bind();
+    global::postEffectBuffer->bindFrameBuffer();
     glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glEnable(GL_DEPTH_TEST);
@@ -46,30 +46,29 @@ void Renderer::RenderAll()
 
     for (auto modelPtr : model_vec) {
         // change MVP in program
-        glm::mat4 model = (*modelPtr).getModelMat();
-        glm::mat4 view = (*m_camera).getViewMat();
-        glm::mat4 proj = (*m_camera).getProjMat();
+        glm::mat4 model = modelPtr->getModelMat();
+        glm::mat4 view = m_camera->getViewMat();
+        glm::mat4 proj = m_camera->getProjMat();
         global::program_first->setUniformMat4("um4mvp", proj * view * model);
 
         // bind mesh and draw
-        for (auto mesh : modelPtr->getMeshes()) {
-            mesh.bind(*global::program_first, "tex");
-	        glDrawElements(GL_TRIANGLES, mesh.getIndices().size(), 
+        for (auto meshPtr : modelPtr->getMeshes()) {
+            meshPtr->bind(*global::program_first, "tex");
+	        glDrawElements(GL_TRIANGLES, meshPtr->getIndicesNum(),
                 GL_UNSIGNED_INT, 0);
         }
 	}
 
-    // second pass
+    // second pass  // this part boom somewhere too
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
     glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT);
     glDisable(GL_DEPTH_TEST);
 
     global::program_second->bind();
-    global::postEffectBuffer->useScreenVertexTexture();
-
+    global::postEffectBuffer->bindScreen();
     glDrawArrays(GL_TRIANGLES, 0, 6);
-
+    // finish all draw calls, now flip swap buffer
     glutSwapBuffers();
 	//printGLError();
 }

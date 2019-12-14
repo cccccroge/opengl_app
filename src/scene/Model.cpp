@@ -32,12 +32,31 @@ Model::Model(const std::string obj_file,
 	processNode(scene, scene->mRootNode);
 }
 
+Model::~Model()
+{
+	for (auto mPtr : meshes) {
+		if (mPtr != NULL) {
+			delete mPtr;
+			mPtr = NULL;
+		}
+	}
+	meshes.clear();
+
+	for (auto tPtr : textures_loaded) {
+		if (tPtr != NULL) {
+			delete tPtr;
+			tPtr = NULL;
+		}
+	}
+	textures_loaded.clear();
+}
+
 
 void Model::processNode(const aiScene *scene, const aiNode *node)
 {
 	for (int i = 0; i < node->mNumMeshes; ++i) {
-		Mesh m = convertMesh(scene, scene->mMeshes[node->mMeshes[i]]);
-		m.setUp();
+		Mesh *m = convertMesh(scene, scene->mMeshes[node->mMeshes[i]]);
+		m->setUp();
 		meshes.push_back(m);
 	}
 
@@ -47,9 +66,9 @@ void Model::processNode(const aiScene *scene, const aiNode *node)
 }
 
 
-Mesh Model::convertMesh(const aiScene *scene, const aiMesh *mesh)
+Mesh* Model::convertMesh(const aiScene *scene, const aiMesh *mesh)
 {
-	Mesh targetMesh;
+	Mesh *targetMesh = new Mesh();
 	
 	// retrieve vertex data
 	for (int i = 0; i < mesh->mNumVertices; ++i) {
@@ -63,15 +82,15 @@ Mesh Model::convertMesh(const aiScene *scene, const aiMesh *mesh)
 		glm::vec2 texCoord = t ? 
 			glm::vec2(t->x, t->y) : glm::vec2(0.0f, 0.0f);
 
-		Vertex vertex(pos, normal, texCoord);
-		targetMesh.getVertices().push_back(vertex);
+		VertexPNT vertex(pos, normal, texCoord);
+		targetMesh->pushVertexPNT(vertex);
 	}
 
 	// retrieve index data
 	for (int i = 0; i < mesh->mNumFaces; ++i) {
 		aiFace face = mesh->mFaces[i];
 		for (int j = 0; j < face.mNumIndices; ++j) {
-			targetMesh.getIndices().push_back(face.mIndices[j]);
+			targetMesh->pushIndex(face.mIndices[j]);
 		}
 	}
 
@@ -79,19 +98,19 @@ Mesh Model::convertMesh(const aiScene *scene, const aiMesh *mesh)
 	if (mesh->mMaterialIndex >= 0) {
 		aiMaterial *mat = scene->mMaterials[mesh->mMaterialIndex];
 
-		std::cout << "converting aiMesh: retrieving textures..." << std::endl;
-		std::cout << "DIFFUSE: " << mat->GetTextureCount(aiTextureType_DIFFUSE)
-			<< "x" << std::endl;
-		std::cout << "SPECULAR: " << mat->GetTextureCount(aiTextureType_SPECULAR)
-			<< "x" << std::endl;
-		std::cout << "AMBIENT: " << mat->GetTextureCount(aiTextureType_AMBIENT)
-			<< "x" << std::endl;
-		std::cout << "OPACITY: " << mat->GetTextureCount(aiTextureType_OPACITY)
-			<< "x" << std::endl;
-		std::cout << "UNKNOWN: " << mat->GetTextureCount(aiTextureType_UNKNOWN)
-			<< "x" << std::endl;
+		// std::cout << "converting aiMesh: retrieving textures..." << std::endl;
+		// std::cout << "DIFFUSE: " << mat->GetTextureCount(aiTextureType_DIFFUSE)
+		// 	<< "x" << std::endl;
+		// std::cout << "SPECULAR: " << mat->GetTextureCount(aiTextureType_SPECULAR)
+		// 	<< "x" << std::endl;
+		// std::cout << "AMBIENT: " << mat->GetTextureCount(aiTextureType_AMBIENT)
+		// 	<< "x" << std::endl;
+		// std::cout << "OPACITY: " << mat->GetTextureCount(aiTextureType_OPACITY)
+		// 	<< "x" << std::endl;
+		// std::cout << "UNKNOWN: " << mat->GetTextureCount(aiTextureType_UNKNOWN)
+		// 	<< "x" << std::endl;
 		
-		std::cout << "converting DIFFUSE textures..." << std::endl;
+		// std::cout << "converting DIFFUSE textures..." << std::endl;
 		for (int i = 0; i < mat->
 			GetTextureCount(aiTextureType_DIFFUSE); ++i) {
 			aiString str;
@@ -106,11 +125,10 @@ Mesh Model::convertMesh(const aiScene *scene, const aiMesh *mesh)
 			bool found = false;
 			for (int j = 0; j < textures_loaded.size(); ++j) {
 				// found in cache
-				if (std::string(textures_loaded[j].getPath()) == 
+				if (std::string(textures_loaded[j]->getPath()) == 
 					directory + current) {
-					std::cout << "found in cache: " << current << std::endl;
-					targetMesh.getTextures().push_back(
-						textures_loaded[j]);
+					// std::cout << "found in cache: " << current << std::endl;
+					targetMesh->pushTexture(textures_loaded[j]);
 					found = true;
 					break;
 				}
@@ -118,9 +136,9 @@ Mesh Model::convertMesh(const aiScene *scene, const aiMesh *mesh)
 
 			// not found in cache
 			if (!found) {
-				std::cout << "not in cache: "<< current << std::endl;
-				Texture tex((directory + current).c_str());
-				targetMesh.getTextures().push_back(tex);
+				// std::cout << "not in cache: "<< current << std::endl;
+				Texture *tex = new Texture((directory + current).c_str());
+				targetMesh->pushTexture(tex);
 				textures_loaded.push_back(tex);
 			}
 		}

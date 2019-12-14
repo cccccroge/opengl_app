@@ -11,13 +11,13 @@
 #include "render/ShaderProgram.h"
 #include "scene/Camera.h"
 #include "render/Renderer.h"
-#include "render/FrameBuffer.h"
+#include "render/PostEffectBuffer.h"
 
 #include <iostream>
 
 ShaderProgram* global::program_first;
 ShaderProgram* global::program_second;
-FrameBuffer* global::postEffectBuffer;
+PostEffectBuffer* global::postEffectBuffer;
 Renderer* global::renderer;
 Model* global::Palace;
 
@@ -65,7 +65,9 @@ void setupRendering()
 	global::renderer->setCamera(global::camViewport);
 
 	// set up post effect buffer
-	global::postEffectBuffer = new FrameBuffer();
+	global::postEffectBuffer = new PostEffectBuffer(MAINWINDOW_WIDTH,
+		MAINWINDOW_HEIGHT);
+	
 	global::program_second->bind();
 	global::program_second->setUniform1i("screenTex", 0);
 }
@@ -91,11 +93,14 @@ int main(int argc, char *argv[])
 
 	// MainLoop ends here, free mem.
 	std::cout << "Return control from main loop." << std::endl;
-	delete global::program_first;
-	delete global::program_second;
-	delete global::Palace;
-	delete global::renderer;
+	
+	std::cout << "deleting postEffectBuffer..." << std::endl;
 	delete global::postEffectBuffer;
-
+	delete global::renderer;
+	std::cout << "deleting Palace..." << std::endl;
+	delete global::Palace;
+	delete global::program_second;
+	delete global::program_first;
+	
 	return 0;
 }
