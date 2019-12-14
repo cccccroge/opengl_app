@@ -17,9 +17,11 @@
 
 ShaderProgram* global::program_first;
 ShaderProgram* global::program_second;
+ShaderProgram* global::program_skybox;
 PostEffectBuffer* global::postEffectBuffer;
 Renderer* global::renderer;
 Model* global::Palace;
+Skybox* global::skybox;
 
 
 void setupRendering()
@@ -39,6 +41,12 @@ void setupRendering()
 	global::program_second->addShader(fragmentShader_second);
 	global::program_second->compile();
 
+	Shader vertexShader_skybox = Shader(GL_VERTEX_SHADER, "assets/skybox.vs.glsl");
+	Shader fragmentShader_skybox = Shader(GL_FRAGMENT_SHADER, "assets/skybox.fs.glsl");
+	global::program_skybox = new ShaderProgram();
+	global::program_skybox->addShader(vertexShader_skybox);
+	global::program_skybox->addShader(fragmentShader_skybox);
+	global::program_skybox->compile();
 	
 	// setup shader variables
 	global::comp_bar_xCoord = 0.5;
@@ -53,15 +61,26 @@ void setupRendering()
 	//global::Palace = new Model("assets/myman/myMan.obj");
 	global::Palace = new Model("assets/lost_empire/lost_empire.obj");
 
+	// setup skybox
+	global::skybox = new Skybox({
+		"assets/cubemaps/face-r.png",
+		"assets/cubemaps/face-l.png",
+		"assets/cubemaps/face-t.png",
+		"assets/cubemaps/face-d.png",
+		"assets/cubemaps/face-f.png",
+		"assets/cubemaps/face-b.png",
+	});
+	global::skybox->scale(1.0f, 1.0f, -1.0f);
+
 	// setup camera
 	global::camViewport = Camera(PROJECTION_TYPE::PERSPECTIVE, 
-		std::vector<float>({ 0.1f, 1000.0f }), glm::vec3(-5.0f, 10.0f, -10.0f), 
-		glm::vec3(0.0f, 5.0f, 0.0f), 60.0f);
+		std::vector<float>({ 0.1f, 1000.0f }), glm::vec3(0.0f, 0.0f, 0.0f), 
+		glm::vec3(-1.0f, -1.0f, 0.0f), 80.0f);
 
 	// send to renderer
 	global::renderer = new Renderer();
 	global::renderer->addModel(*global::Palace);
-
+	global::renderer->addSkybox(*global::skybox);
 	global::renderer->setCamera(global::camViewport);
 
 	// set up post effect buffer
@@ -94,10 +113,8 @@ int main(int argc, char *argv[])
 	// MainLoop ends here, free mem.
 	std::cout << "Return control from main loop." << std::endl;
 	
-	std::cout << "deleting postEffectBuffer..." << std::endl;
 	delete global::postEffectBuffer;
 	delete global::renderer;
-	std::cout << "deleting Palace..." << std::endl;
 	delete global::Palace;
 	delete global::program_second;
 	delete global::program_first;

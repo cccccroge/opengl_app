@@ -11,11 +11,9 @@ int initGlutContext(int argc, char *argv[])
 	glutInit(&argc, argv);
 
     glutInitDisplayMode(GLUT_RGBA | GLUT_DOUBLE | GLUT_DEPTH | GLUT_MULTISAMPLE);
-	int mainwindow_width = 1024;
-	int mainwindow_height = 576;
-	int center_x = (glutGet(GLUT_SCREEN_WIDTH) - mainwindow_width) / 2;
-	int center_y = (glutGet(GLUT_SCREEN_HEIGHT) - mainwindow_height) / 2;
-	glutInitWindowSize(mainwindow_width, mainwindow_height);
+	int center_x = (glutGet(GLUT_SCREEN_WIDTH) - MAINWINDOW_WIDTH) / 2;
+	int center_y = (glutGet(GLUT_SCREEN_HEIGHT) - MAINWINDOW_HEIGHT) / 2;
+	glutInitWindowSize(MAINWINDOW_WIDTH, MAINWINDOW_HEIGHT);
 	glutInitWindowPosition(center_x, center_y);
 
 	return glutCreateWindow("My Robot");

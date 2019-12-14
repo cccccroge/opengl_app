@@ -7,6 +7,7 @@
 #include "render/ShaderProgram.h"
 #include "render/Renderer.h"
 #include "render/PostEffectBuffer.h"
+#include "scene/Skybox.h"
 
 #endif
 
@@ -17,9 +18,11 @@ namespace global
     extern GlutTimer timer;
     extern ShaderProgram *program_first;
     extern ShaderProgram *program_second;
+    extern ShaderProgram *program_skybox;
     extern PostEffectBuffer *postEffectBuffer;
 
     extern Model *Palace;
+    extern Skybox *skybox;
 
     extern Camera camViewport;
     extern Renderer *renderer;

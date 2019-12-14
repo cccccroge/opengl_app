@@ -15,10 +15,10 @@ public:
     Mesh();
     Mesh(std::vector<VertexP2T> &vertices);
     Mesh(std::vector<VertexPNT> &vertices, std::vector<GLuint> &indices);
+    Mesh(std::vector<VertexP> &vertices);
     ~Mesh();
 
     inline void pushVertexPNT(VertexPNT v) { verticesPNT.push_back(v); }
-    inline void pushVertexP2T(VertexP2T v) { verticesP2T.push_back(v); }
     inline void pushIndex(GLuint i) { indices.push_back(i); }
     inline void pushTexture(Texture* t) { textures.push_back(t); }
 
@@ -27,11 +27,10 @@ public:
     void setUp();
     void bind(ShaderProgram &program, const std::string tex_prefix);
     void bind();
-    // TODO: unbind?
+    void unbind();
 
 private:
     std::vector<VertexPNT> verticesPNT;
-    std::vector<VertexP2T> verticesP2T;
     std::vector<GLuint> indices;
     std::vector<Texture*> textures;
 

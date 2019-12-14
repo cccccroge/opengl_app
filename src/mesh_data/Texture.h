@@ -25,7 +25,7 @@ private:
     int width;
     int height;
     unsigned char *data;
-    std::string type;
+    std::string type;   //TODO: what to do with this?
     const char *path;   // absolute path get from Model
 
     GLuint tbo;

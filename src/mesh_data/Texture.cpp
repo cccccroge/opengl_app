@@ -1,5 +1,4 @@
 #include "Texture.h"
-#define STB_IMAGE_IMPLEMENTATION
 #include "STB/stb_image.h"
 #include <iostream>
 
@@ -9,8 +8,8 @@ Texture::Texture(const char *path) :
 {
 	stbi_set_flip_vertically_on_load(1);
 
-	int BPP;	// byte per pixel?
-	data = stbi_load(path, &width, &height, &BPP, 4);
+	int channel;
+	data = stbi_load(path, &width, &height, &channel, 4);
 	if (data != NULL) {
 		// std::cout << "loading pic successfully" << std::endl;
 		setUp();

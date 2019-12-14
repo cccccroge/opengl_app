@@ -6,6 +6,9 @@
 #include "../mesh_data/Mesh.h"
 #include "RenderBuffer.h"
 
+
+/* This class serve as task specific frame buffer (do post effect) */
+/* And it is actually not a 'FrameBuffer', it contains FrameBuffer */
 class PostEffectBuffer
 {
 public:

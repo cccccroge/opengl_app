@@ -3,7 +3,7 @@
 #include "GLM/glm_996/vec3.hpp"
 #include "GLM/glm_996/vec2.hpp"
 
-
+// TODO: how to bind with layout together?
 class VertexPNT
 {
 public:
@@ -24,5 +24,14 @@ public:
 private:
 	glm::vec2 position2d;
 	glm::vec2 texture_coordinate;
+};
+
+class VertexP
+{
+public:
+	VertexP(const glm::vec3 &pos);
+
+private:
+	glm::vec3 position;
 };
 

@@ -22,7 +22,8 @@ PostEffectBuffer::PostEffectBuffer(const int width, const int height) :
     for (int i = 0; i < 6; ++i) {
         vertices.push_back(VertexP2T(
             glm::vec2(screenVertices[4*i], screenVertices[4*i+1]), 
-            glm::vec2(screenVertices[4*i+2], screenVertices[4*i+3]) ));
+            glm::vec2(screenVertices[4*i+2], screenVertices[4*i+3]))
+        );
     }
 
     screen_mesh = new Mesh(vertices);

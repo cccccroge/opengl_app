@@ -18,6 +18,11 @@ Mesh::Mesh(std::vector<VertexPNT> &vertices, std::vector<GLuint> &indices)
     vertex_arr = new VertexArray(vertices, indices);
 }
 
+Mesh::Mesh(std::vector<VertexP> &vertices)
+{
+    vertex_arr = new VertexArray(vertices);
+}
+
 Mesh::~Mesh()
 {
     // note: no need to delete texture element, we will delete them in Model's cache
@@ -52,4 +57,11 @@ void Mesh::bind(ShaderProgram &program, const std::string tex_prefix)
 void Mesh::bind()
 {
     vertex_arr->bind();
+}
+
+
+/* only unbind vao (when there's no texture in this mesh) */
+void Mesh::unbind()
+{
+    vertex_arr->unbind();
 }

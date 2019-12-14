@@ -3,6 +3,8 @@ CXX_FLAGS := -Wall -Wextra -std=c++17 -ggdb
 
 BIN		:= bin
 
+STB		:= include/STB
+
 SRC		:= src
 RENDER  := src/render
 SCENE   := src/scene
@@ -22,7 +24,7 @@ run: clean all
 	clear
 	./$(BIN)/$(EXECUTABLE)
 
-$(BIN)/$(EXECUTABLE): $(SRC)/*.cpp $(RENDER)/*.cpp $(SCENE)/*.cpp $(EVENT)/*.cpp $(MESH_DATA)/*.cpp
+$(BIN)/$(EXECUTABLE): $(STB)/*.cpp $(SRC)/*.cpp $(RENDER)/*.cpp $(SCENE)/*.cpp $(EVENT)/*.cpp $(MESH_DATA)/*.cpp
 	$(CXX) $(CXX_FLAGS) -I$(INCLUDE) -L$(LIB) $^ -o $@ $(LIBRARIES)
 
 clean:

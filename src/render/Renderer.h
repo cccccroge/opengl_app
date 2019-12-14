@@ -3,6 +3,7 @@
 #include "GLEW/glew.h"
 #include "../scene/Model.h"
 #include "../scene/Camera.h"
+#include "../scene/Skybox.h"
 #include <vector>
 
 
@@ -13,6 +14,7 @@ public:
     ~Renderer();
     void setCamera(Camera &cam);
     void addModel(Model &model);
+    void addSkybox(Skybox &skybox);
     void RenderAll();
 
     inline Camera* getCamera() { return m_camera; }
@@ -20,5 +22,6 @@ public:
 private:
     Camera *m_camera;
     std::vector<Model *> model_vec;
+    Skybox *skybox;
 };
 

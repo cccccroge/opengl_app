@@ -5,7 +5,7 @@
 #include "../mesh_data/Texture.h"
 #include "RenderBuffer.h"
 
-/* For now this class serve as task specific frame buffer (do post effect) */
+
 class FrameBuffer
 {
 public:
