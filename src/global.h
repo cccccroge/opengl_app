@@ -16,12 +16,12 @@
 namespace global
 {
     extern GlutTimer timer;
-    extern ShaderProgram *program_first;
-    extern ShaderProgram *program_second;
+    extern ShaderProgram *program_model;
+    extern ShaderProgram *program_posteffect;
     extern ShaderProgram *program_skybox;
     extern PostEffectBuffer *postEffectBuffer;
 
-    extern Model *Palace;
+    extern Model *Man;
     extern Skybox *skybox;
 
     extern Camera camViewport;

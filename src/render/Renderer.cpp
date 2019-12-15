@@ -45,39 +45,43 @@ void Renderer::RenderAll()
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     
 
-    // draw sky box
-    glDepthMask(GL_FALSE);
-
-    global::program_skybox->bind();
-    glm::mat4 model = skybox->getModelMat();
-    glm::mat4 view = glm::mat4(
-        glm::mat3(m_camera->getViewMat()));  // drop transformation for skybox
-    glm::mat4 proj = m_camera->getProjMat();
-    global::program_skybox->setUniformMat4("um4mvp", proj * view * model);
-    skybox->bind();
-    glDrawArrays(GL_TRIANGLES, 0, 36);
-    glDepthMask(GL_TRUE);
-
-
-glEnable(GL_DEPTH_TEST);
-	glDepthFunc(GL_LEQUAL);
     // draw all models
-    /*global::program_first->bind();
+    glEnable(GL_DEPTH_TEST);
+	glDepthFunc(GL_LEQUAL);
+
+    global::program_model->bind();
 
     for (auto modelPtr : model_vec) {
         // change MVP in program
         glm::mat4 model = modelPtr->getModelMat();
         glm::mat4 view = m_camera->getViewMat();
         glm::mat4 proj = m_camera->getProjMat();
-        global::program_first->setUniformMat4("um4mvp", proj * view * model);
+        glm::vec3 cameraPos = m_camera->getPos();
+        global::program_model->setUniformMat4("mvpMatrix", proj * view * model);
+        global::program_model->setUniformMat4("mMatrix", model);
+        global::program_model->setUniformVec3("viewPos", cameraPos);
 
         // bind mesh and draw
         for (auto meshPtr : modelPtr->getMeshes()) {
-            meshPtr->bind(*global::program_first, "tex");
+            meshPtr->bind(*global::program_model, "tex");
 	        glDrawElements(GL_TRIANGLES, meshPtr->getIndicesNum(),
                 GL_UNSIGNED_INT, 0);
         }
 	}
+    
+    // draw sky box
+    glDepthMask(GL_FALSE);
+
+    global::program_skybox->bind();
+    glm::mat4 model = skybox->getModelMat();
+    glm::mat4 view = glm::mat4( // drop transformation for skybox so that it won't move
+        glm::mat3(m_camera->getViewMat()));
+    glm::mat4 proj = m_camera->getProjMat();
+    global::program_skybox->setUniformMat4("um4mvp", proj * view * model);
+    skybox->bind();
+    glDrawArrays(GL_TRIANGLES, 0, 36);
+
+    glDepthMask(GL_TRUE);
 
 
     /* Second pass */
@@ -86,7 +90,7 @@ glEnable(GL_DEPTH_TEST);
     glClear(GL_COLOR_BUFFER_BIT);
     glDisable(GL_DEPTH_TEST);
 
-    global::program_second->bind();
+    global::program_posteffect->bind();
     global::postEffectBuffer->bindScreen();
     glDrawArrays(GL_TRIANGLES, 0, 6);
 

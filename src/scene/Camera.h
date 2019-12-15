@@ -49,9 +49,10 @@ private:
     float bottom;
     float top;
 
+public:
+    glm::vec3 getPos();
 private:
     glm::vec3 getDirection(const char which);
-    glm::vec3 getPos();
     glm::vec3 getLookPos();
     glm::vec3 getRightPos();
     glm::vec3 getUpPos();

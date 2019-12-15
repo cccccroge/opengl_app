@@ -98,19 +98,19 @@ Mesh* Model::convertMesh(const aiScene *scene, const aiMesh *mesh)
 	if (mesh->mMaterialIndex >= 0) {
 		aiMaterial *mat = scene->mMaterials[mesh->mMaterialIndex];
 
-		// std::cout << "converting aiMesh: retrieving textures..." << std::endl;
-		// std::cout << "DIFFUSE: " << mat->GetTextureCount(aiTextureType_DIFFUSE)
-		// 	<< "x" << std::endl;
-		// std::cout << "SPECULAR: " << mat->GetTextureCount(aiTextureType_SPECULAR)
-		// 	<< "x" << std::endl;
-		// std::cout << "AMBIENT: " << mat->GetTextureCount(aiTextureType_AMBIENT)
-		// 	<< "x" << std::endl;
-		// std::cout << "OPACITY: " << mat->GetTextureCount(aiTextureType_OPACITY)
-		// 	<< "x" << std::endl;
-		// std::cout << "UNKNOWN: " << mat->GetTextureCount(aiTextureType_UNKNOWN)
-		// 	<< "x" << std::endl;
+		std::cout << "converting aiMesh: retrieving textures..." << std::endl;
+		std::cout << "DIFFUSE: " << mat->GetTextureCount(aiTextureType_DIFFUSE)
+			<< "x" << std::endl;
+		std::cout << "SPECULAR: " << mat->GetTextureCount(aiTextureType_SPECULAR)
+			<< "x" << std::endl;
+		std::cout << "AMBIENT: " << mat->GetTextureCount(aiTextureType_AMBIENT)
+			<< "x" << std::endl;
+		std::cout << "OPACITY: " << mat->GetTextureCount(aiTextureType_OPACITY)
+			<< "x" << std::endl;
+		std::cout << "UNKNOWN: " << mat->GetTextureCount(aiTextureType_UNKNOWN)
+			<< "x" << std::endl;
 		
-		// std::cout << "converting DIFFUSE textures..." << std::endl;
+		std::cout << "converting DIFFUSE textures..." << std::endl;
 		for (int i = 0; i < mat->
 			GetTextureCount(aiTextureType_DIFFUSE); ++i) {
 			aiString str;
@@ -127,7 +127,7 @@ Mesh* Model::convertMesh(const aiScene *scene, const aiMesh *mesh)
 				// found in cache
 				if (std::string(textures_loaded[j]->getPath()) == 
 					directory + current) {
-					// std::cout << "found in cache: " << current << std::endl;
+					std::cout << "found in cache: " << current << std::endl;
 					targetMesh->pushTexture(textures_loaded[j]);
 					found = true;
 					break;
@@ -136,7 +136,7 @@ Mesh* Model::convertMesh(const aiScene *scene, const aiMesh *mesh)
 
 			// not found in cache
 			if (!found) {
-				// std::cout << "not in cache: "<< current << std::endl;
+				std::cout << "not in cache: "<< current << std::endl;
 				Texture *tex = new Texture((directory + current).c_str());
 				targetMesh->pushTexture(tex);
 				textures_loaded.push_back(tex);

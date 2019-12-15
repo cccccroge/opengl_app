@@ -15,31 +15,31 @@
 
 #include <iostream>
 
-ShaderProgram* global::program_first;
-ShaderProgram* global::program_second;
+ShaderProgram* global::program_model;
+ShaderProgram* global::program_posteffect;
 ShaderProgram* global::program_skybox;
 PostEffectBuffer* global::postEffectBuffer;
 Renderer* global::renderer;
-Model* global::Palace;
+Model* global::Man;
 Skybox* global::skybox;
 
 
 void setupRendering()
 {
 	// setup shader program
-	Shader vertexShader_first = Shader(GL_VERTEX_SHADER, "assets/vertex_first.vs.glsl");
-	Shader fragmentShader_first = Shader(GL_FRAGMENT_SHADER, "assets/fragment_first.fs.glsl");
-	global::program_first = new ShaderProgram();
-	global::program_first->addShader(vertexShader_first);
-	global::program_first->addShader(fragmentShader_first);
-	global::program_first->compile();
+	Shader vertexShader_first = Shader(GL_VERTEX_SHADER, "assets/model.vs.glsl");
+	Shader fragmentShader_first = Shader(GL_FRAGMENT_SHADER, "assets/model.fs.glsl");
+	global::program_model = new ShaderProgram();
+	global::program_model->addShader(vertexShader_first);
+	global::program_model->addShader(fragmentShader_first);
+	global::program_model->compile();
 
-	Shader vertexShader_second = Shader(GL_VERTEX_SHADER, "assets/vertex_second.vs.glsl");
-	Shader fragmentShader_second = Shader(GL_FRAGMENT_SHADER, "assets/fragment_second.fs.glsl");
-	global::program_second = new ShaderProgram();
-	global::program_second->addShader(vertexShader_second);
-	global::program_second->addShader(fragmentShader_second);
-	global::program_second->compile();
+	Shader vertexShader_second = Shader(GL_VERTEX_SHADER, "assets/posteffect.vs.glsl");
+	Shader fragmentShader_second = Shader(GL_FRAGMENT_SHADER, "assets/posteffect.fs.glsl");
+	global::program_posteffect = new ShaderProgram();
+	global::program_posteffect->addShader(vertexShader_second);
+	global::program_posteffect->addShader(fragmentShader_second);
+	global::program_posteffect->compile();
 
 	Shader vertexShader_skybox = Shader(GL_VERTEX_SHADER, "assets/skybox.vs.glsl");
 	Shader fragmentShader_skybox = Shader(GL_FRAGMENT_SHADER, "assets/skybox.fs.glsl");
@@ -47,19 +47,13 @@ void setupRendering()
 	global::program_skybox->addShader(vertexShader_skybox);
 	global::program_skybox->addShader(fragmentShader_skybox);
 	global::program_skybox->compile();
-	
-	// setup shader variables
-	global::comp_bar_xCoord = 0.5;
-	global::program_first->bind();
-	global::program_first->setUniform1f("uf_comp_bar_xCoord", 
-		global::comp_bar_xCoord);
-	global::program_second->bind();
-	global::program_second->setUniform1f("uf_comp_bar_xCoord", 
-		global::comp_bar_xCoord);
    
 	// setup models
 	//global::Palace = new Model("assets/myman/myMan.obj");
-	global::Palace = new Model("assets/lost_empire/lost_empire.obj");
+	//global::Palace = new Model("assets/lost_empire/lost_empire.obj");
+	global::Man = new Model("assets/hisman/nanosuit.obj");
+	global::Man->translate(-10.0f, -13.0f, -8.0f);
+	global::Man->scale(0.5f, 0.35f, 0.5f);
 
 	// setup skybox
 	global::skybox = new Skybox({
@@ -70,7 +64,7 @@ void setupRendering()
 		"assets/cubemaps/face-f.png",
 		"assets/cubemaps/face-b.png",
 	});
-	global::skybox->scale(1.0f, 1.0f, -1.0f);
+	global::skybox->scale(1.0f, 1.0f, -1.0f);	// flip it for godsake!
 
 	// setup camera
 	global::camViewport = Camera(PROJECTION_TYPE::PERSPECTIVE, 
@@ -79,7 +73,7 @@ void setupRendering()
 
 	// send to renderer
 	global::renderer = new Renderer();
-	global::renderer->addModel(*global::Palace);
+	global::renderer->addModel(*global::Man);
 	global::renderer->addSkybox(*global::skybox);
 	global::renderer->setCamera(global::camViewport);
 
@@ -87,8 +81,21 @@ void setupRendering()
 	global::postEffectBuffer = new PostEffectBuffer(MAINWINDOW_WIDTH,
 		MAINWINDOW_HEIGHT);
 	
-	global::program_second->bind();
-	global::program_second->setUniform1i("screenTex", 0);
+	global::program_posteffect->bind();
+	global::program_posteffect->setUniform1i("screenTex", 0);
+
+	// set up uniforms in first program
+	global::program_model->bind();
+	global::program_model->setUniformVec3("lightPos", 
+		glm::vec3(-31.75f, 26.05f, -97.72f));
+	global::program_model->setUniform1f("ambientStrength", 0.0f);
+	global::program_model->setUniformVec3("ambientAlbedo",
+		glm::vec3(1.0f, 1.0f, 1.0f));
+	global::program_model->setUniformVec3("diffuseAlbedo",
+		glm::vec3(0.35f, 0.35f, 0.35f));
+	global::program_model->setUniformVec3("specularAlbedo",
+		glm::vec3(0.7f, 0.7f, 0.7f));
+	global::program_model->setUniform1i("specularPower", 200);
 }
 
 
@@ -115,9 +122,9 @@ int main(int argc, char *argv[])
 	
 	delete global::postEffectBuffer;
 	delete global::renderer;
-	delete global::Palace;
-	delete global::program_second;
-	delete global::program_first;
+	delete global::Man;
+	delete global::program_posteffect;
+	delete global::program_model;
 	
 	return 0;
 }

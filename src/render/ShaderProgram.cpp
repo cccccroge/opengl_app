@@ -88,3 +88,8 @@ void ShaderProgram::setUniform1f(const char *name, GLfloat val)
 {
     glUniform1f(getUniform(name), val);
 }
+
+void ShaderProgram::setUniformVec3(const char *name, glm::vec3 vec)
+{
+    glUniform3fv(getUniform(name), 1, glm::value_ptr(vec));
+}

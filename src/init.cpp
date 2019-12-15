@@ -31,20 +31,14 @@ void createMenu(void)
 {
 	int menu_main = glutCreateMenu(onMenuTriggered);
 	int menu_timer = glutCreateMenu(onMenuTriggered);
-	int menu_shader = glutCreateMenu(onMenuTriggered);
 
 	glutSetMenu(menu_main);
 	glutAddSubMenu("Timer", menu_timer);
-	glutAddSubMenu("Shader", menu_shader);
 	glutAddMenuEntry("Exit", MENU_EXIT);
 
 	glutSetMenu(menu_timer);
 	glutAddMenuEntry("Start", MENU_TIMER_START);
-	glutAddMenuEntry("Stop", MENU_TIMER_STOP);
-
-	glutSetMenu(menu_shader);						
-	glutAddMenuEntry("Flat", MENU_SHADER_FLAT);		
-	glutAddMenuEntry("Normal As Color", MENU_SHADER_NORMAL_AS_COLOR);		
+	glutAddMenuEntry("Stop", MENU_TIMER_STOP);	
 
 	glutSetMenu(menu_main);
 	glutAttachMenu(MENU_TRIGGER_BUTTON);
