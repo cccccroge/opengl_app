@@ -63,12 +63,13 @@ void Renderer::RenderAll()
 
         // bind mesh and draw
         for (auto meshPtr : modelPtr->getMeshes()) {
+            skybox->getTexture().bind();  // use in enviroment mapping
             meshPtr->bind(*global::program_model, "tex");
 	        glDrawElements(GL_TRIANGLES, meshPtr->getIndicesNum(),
                 GL_UNSIGNED_INT, 0);
         }
 	}
-    
+
     // draw sky box
     glDepthMask(GL_FALSE);
 

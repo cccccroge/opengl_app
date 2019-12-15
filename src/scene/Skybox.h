@@ -13,6 +13,7 @@ class Skybox : public SceneObject
 public:
     Skybox(const std::vector<std::string> images);
     ~Skybox();
+    inline CubemapTexture& getTexture() { return cubemap_tex; }
 
     void bind();
     void unbind();
