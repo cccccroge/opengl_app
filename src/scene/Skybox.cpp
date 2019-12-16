@@ -69,14 +69,15 @@ Skybox::~Skybox()
     }
 }
 
-void Skybox::bind()
+void Skybox::bind(ShaderProgram &program, const std::string sampler_name, 
+        const int index)
 {
     cube_mesh->bind();
-    cubemap_tex.bind();
+    cubemap_tex.bind(program, sampler_name, index);
 }
 
 void Skybox::unbind()
 {
     cube_mesh->unbind();
-    cubemap_tex.unbind();
+    //cubemap_tex.unbind();
 }

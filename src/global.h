@@ -23,6 +23,7 @@ namespace global
 
     extern PostEffectBuffer *postEffectBuffer;
     extern FrameBuffer *depthMapBuffer;
+    extern Texture* depthTex;
 
     extern Model *Man;
     extern Skybox *skybox;

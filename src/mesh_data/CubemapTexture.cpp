@@ -51,14 +51,17 @@ CubemapTexture::~CubemapTexture()
     glDeleteTextures(1, &tbo);
 }
 
-void CubemapTexture::bind()
+void CubemapTexture::bind(ShaderProgram &program, const std::string sampler_name, 
+        const int index)
 {
-    glActiveTexture(GL_TEXTURE0);
+    glActiveTexture(GL_TEXTURE0 + index);
     glBindTexture(GL_TEXTURE_CUBE_MAP, tbo);
+	program.bind();
+	program.setUniform1i(sampler_name.c_str(), (GLint)index);
 }
 
-void CubemapTexture::unbind()
+void CubemapTexture::unbind(const int index)
 {
-    glActiveTexture(GL_TEXTURE0);
+    glActiveTexture(GL_TEXTURE0 + index);
     glBindTexture(GL_TEXTURE_CUBE_MAP, 0);
 }

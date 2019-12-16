@@ -11,9 +11,15 @@ in VertexData
 in BlinnPhongData
 {
     vec3 fragPos;
-    vec3 normal;
+    vec3 normal;    // in world space
 
 } blinnPhongData;
+
+in ShadowData
+{
+    vec4 fragPos;   // in light space
+
+} shadowData;
 
 uniform vec3 lightPos;
 uniform vec3 viewPos;
@@ -24,6 +30,7 @@ uniform vec3 specularAlbedo;
 uniform int specularPower;
 
 uniform samplerCube skybox;
+uniform sampler2D shadowMap;
 
 layout(location = 0) out vec4 fragColor;
 
@@ -41,6 +48,24 @@ vec4 environment_map()
     return col;
 }
 
+float shadow_factor(vec4 fragPos)   // light space
+{
+    // perspective divide (in case the light camera is perspective)
+    // [-x, x] -> [-1, 1]
+    vec3 proj_coord = fragPos.xyz / fragPos.w;
+
+    // transform to the range 0~1
+    // [-1, 1] -> [0, 1]
+    proj_coord = proj_coord * 0.5 + 0.5;
+
+    // calculate shadow factor
+    float closest_depth = texture(shadowMap, proj_coord.xy).r;
+    float current_depth = proj_coord.z;
+    float shadow_factor = current_depth > closest_depth ? 1.0 : 0.0;
+
+    return shadow_factor;
+}
+
 vec4 blinn_phong()
 {
     // Ambient
@@ -55,19 +80,20 @@ vec4 blinn_phong()
     // Specular
     vec3 view_dir_unit = normalize(viewPos - blinnPhongData.fragPos);
     vec3 reflect_unit = reflect(-light_dir_unit, normal_unit);
-    /*float specular_value = pow(   // this is Phong
-        max(dot(view_dir_unit, reflect_unit), 0.0), specularPower);*/
     vec3 halfway_unit = normalize(light_dir_unit + view_dir_unit);
     float specular_value = pow(
         max(dot(normal_unit, halfway_unit), 0.0), specularPower);
     vec3 specular = specular_value * specularAlbedo;
 
-    // Ambient + Diffuse + Specular
+    // Ambient + Diffuse + (Specular blended with env. map)
     float model_color = 1.0;
     vec3 mix = (ambient + diffuse + 
         specular * 0.65 + environment_map().xyz * 0.35) * model_color;
 
-    return vec4(mix, 1.0);
+    // Add shadow
+    vec3 result = mix * (1 - shadow_factor(shadowData.fragPos));
+
+    return vec4(result, 1.0);
 }
 
 

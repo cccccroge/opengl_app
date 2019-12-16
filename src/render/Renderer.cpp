@@ -46,7 +46,6 @@ void Renderer::addSkybox(Skybox &_skybox)
 void Renderer::RenderAll()
 {
     /* First pass */
-
     // draw depth map
     global::depthMapBuffer->bind();
     glViewport(0, 0, 1024, 1024);
@@ -92,7 +91,10 @@ void Renderer::RenderAll()
 
         // bind mesh and draw
         for (auto meshPtr : modelPtr->getMeshes()) {
-            skybox->getTexture().bind();  // use in enviroment mapping
+            skybox->getTexture().bind(*global::program_model,   // use in enviroment mapping
+                "skybox", 0);
+            global::depthTex->bind(*global::program_model,    // use in shadow mapping
+                "shadowMap", 1);
             meshPtr->bind(*global::program_model, "tex");
 	        glDrawElements(GL_TRIANGLES, meshPtr->getIndicesNum(),
                 GL_UNSIGNED_INT, 0);
@@ -108,7 +110,7 @@ void Renderer::RenderAll()
         glm::mat3(main_camera->getViewMat()));
     glm::mat4 proj = main_camera->getProjMat();
     global::program_skybox->setUniformMat4("um4mvp", proj * view * model);
-    skybox->bind();
+    skybox->bind(*global::program_skybox, "skybox", 0);
     glDrawArrays(GL_TRIANGLES, 0, 36);
 
     glDepthMask(GL_TRUE);

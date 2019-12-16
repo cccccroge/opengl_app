@@ -15,7 +15,8 @@ public:
     ~Skybox();
     inline CubemapTexture& getTexture() { return cubemap_tex; }
 
-    void bind();
+    void bind(ShaderProgram &program, const std::string sampler_name, 
+        const int index);
     void unbind();
 
 private:

@@ -74,15 +74,13 @@ void Texture::setUp()
 }
 
 
-void Texture::bind(ShaderProgram &program, const std::string tex_prefix, 
+void Texture::bind(ShaderProgram &program, const std::string sampler_name, 
 	const int index)
 {
     glActiveTexture(GL_TEXTURE0 + index);
 	glBindTexture(GL_TEXTURE_2D, tbo);
 	program.bind();
-	program.setUniform1i(
-		(tex_prefix + std::to_string(index)).c_str(), 
-		(GLint)index);
+	program.setUniform1i(sampler_name.c_str(), (GLint)index);
 }
 
 

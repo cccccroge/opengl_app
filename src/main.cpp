@@ -21,6 +21,7 @@ ShaderProgram* global::program_skybox;
 ShaderProgram* global::program_shadow;
 PostEffectBuffer* global::postEffectBuffer;
 FrameBuffer* global::depthMapBuffer;
+Texture* global::depthTex;
 Renderer* global::renderer;
 Model* global::Man;
 Skybox* global::skybox;
@@ -99,12 +100,10 @@ void setupRendering()
 
 	// set up depth map buffer
 	global::depthMapBuffer = new FrameBuffer();
-	Texture depthTex(0, 1024, 1024);
-	global::depthMapBuffer->attachTexture(depthTex, GL_DEPTH_ATTACHMENT);
+	global::depthTex = new Texture(0, 1024, 1024);
+	global::depthMapBuffer->attachTexture(*global::depthTex, GL_DEPTH_ATTACHMENT);
 	global::depthMapBuffer->attachEmptyColorBuffer();
 	global::depthMapBuffer->validate();
-
-
 
 	// set up uniforms in first program
 	global::program_model->bind();

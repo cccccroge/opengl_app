@@ -15,7 +15,7 @@ public:
     ~Texture();
 
     void setUp();
-    void bind(ShaderProgram &program, const std::string tex_prefix, 
+    void bind(ShaderProgram &program, const std::string sampler_name, 
         const int index);
     void bind();
 
