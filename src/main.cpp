@@ -18,7 +18,9 @@
 ShaderProgram* global::program_model;
 ShaderProgram* global::program_posteffect;
 ShaderProgram* global::program_skybox;
+ShaderProgram* global::program_shadow;
 PostEffectBuffer* global::postEffectBuffer;
+FrameBuffer* global::depthMapBuffer;
 Renderer* global::renderer;
 Model* global::Man;
 Skybox* global::skybox;
@@ -47,13 +49,20 @@ void setupRendering()
 	global::program_skybox->addShader(vertexShader_skybox);
 	global::program_skybox->addShader(fragmentShader_skybox);
 	global::program_skybox->compile();
+
+	Shader vertexShader_shadow = Shader(GL_VERTEX_SHADER, "assets/shadow.vs.glsl");
+	Shader fragmentShader_shadow = Shader(GL_FRAGMENT_SHADER, "assets/shadow.fs.glsl");
+	global::program_shadow = new ShaderProgram();
+	global::program_shadow->addShader(vertexShader_shadow);
+	global::program_shadow->addShader(fragmentShader_shadow);
+	global::program_shadow->compile();
    
 	// setup models
 	//global::Palace = new Model("assets/myman/myMan.obj");
 	//global::Palace = new Model("assets/lost_empire/lost_empire.obj");
-	global::Man = new Model("assets/hisman/ball.obj");
+	global::Man = new Model("assets/hisman/nanosuit.obj");
 	global::Man->translate(-10.0f, -13.0f, -8.0f);
-	//global::Man->scale(0.5f, 0.35f, 0.5f);
+	global::Man->scale(0.5f, 0.35f, 0.5f);
 
 	// setup skybox
 	global::skybox = new Skybox({
@@ -67,15 +76,19 @@ void setupRendering()
 	global::skybox->scale(1.0f, 1.0f, -1.0f);	// flip it for godsake!
 
 	// setup camera
-	global::camViewport = Camera(PROJECTION_TYPE::PERSPECTIVE, 
+	global::camViewport = Camera(PROJECTION_TYPE::PERSPECTIVE, 	// main camera
 		std::vector<float>({ 0.1f, 1000.0f }), glm::vec3(0.0f, 0.0f, 0.0f), 
 		glm::vec3(-1.0f, -1.0f, 0.0f), 80.0f);
+	global::camLight = Camera(PROJECTION_TYPE::ORTHOGONAL,	// light camera to produce depth map
+		std::vector<float>({ 1.0f, 7.5f, -10.0f, 10.0f, -10.0f, 10.0f }), 
+		glm::vec3(-31.75f, 26.05f, -97.72f), glm::vec3(-10.0f, -13.0f, -8.0f), 0);
 
 	// send to renderer
 	global::renderer = new Renderer();
 	global::renderer->addModel(*global::Man);
 	global::renderer->addSkybox(*global::skybox);
-	global::renderer->setCamera(global::camViewport);
+	global::renderer->setMainCamera(global::camViewport);
+	global::renderer->setLightCamera(global::camLight);
 
 	// set up post effect buffer
 	global::postEffectBuffer = new PostEffectBuffer(MAINWINDOW_WIDTH,
@@ -83,6 +96,15 @@ void setupRendering()
 	
 	global::program_posteffect->bind();
 	global::program_posteffect->setUniform1i("screenTex", 0);
+
+	// set up depth map buffer
+	global::depthMapBuffer = new FrameBuffer();
+	Texture depthTex(0, 1024, 1024);
+	global::depthMapBuffer->attachTexture(depthTex, GL_DEPTH_ATTACHMENT);
+	global::depthMapBuffer->attachEmptyColorBuffer();
+	global::depthMapBuffer->validate();
+
+
 
 	// set up uniforms in first program
 	global::program_model->bind();

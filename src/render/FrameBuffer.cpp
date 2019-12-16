@@ -17,10 +17,10 @@ FrameBuffer::~FrameBuffer()
 }
 
 
-void FrameBuffer::attachTexture(Texture &tex)
+void FrameBuffer::attachTexture(Texture &tex, const GLenum attach_type)
 {
     bind();
-    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, 
+    glFramebufferTexture2D(GL_FRAMEBUFFER, attach_type, 
         GL_TEXTURE_2D, tex.getTbo(), 0);
     unbind();
 }
@@ -34,6 +34,13 @@ void FrameBuffer::attachRenderBuffer(RenderBuffer &render_buffer)
     unbind();
 }
 
+void FrameBuffer::attachEmptyColorBuffer()
+{
+    bind();
+    glDrawBuffer(GL_NONE);
+    glReadBuffer(GL_NONE);
+    unbind();
+}
 
 bool FrameBuffer::validate()
 {

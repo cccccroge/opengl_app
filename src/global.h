@@ -19,12 +19,16 @@ namespace global
     extern ShaderProgram *program_model;
     extern ShaderProgram *program_posteffect;
     extern ShaderProgram *program_skybox;
+    extern ShaderProgram *program_shadow;
+
     extern PostEffectBuffer *postEffectBuffer;
+    extern FrameBuffer *depthMapBuffer;
 
     extern Model *Man;
     extern Skybox *skybox;
 
     extern Camera camViewport;
+    extern Camera camLight;
     extern Renderer *renderer;
 
     extern float renderWidth;

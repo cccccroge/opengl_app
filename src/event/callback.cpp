@@ -53,7 +53,6 @@ void onMenuTriggered(int id)
 void onDisplayRefresh(void)
 {
 	global::renderer->RenderAll();
-	//printGLError();
 }
 
 
@@ -87,6 +86,16 @@ void onKeyboardPressed(unsigned char key, int x, int y)
 			else if (toolMode == TOOL_MODE::TOGGLE_FULLSCREEN) {
 				glutFullScreenToggle();
 			}
+		}
+
+		// model rotation
+		switch(key) {
+			case 'q':
+				global::Man->rotate(3.0f, UP_VECTOR);
+				break;
+			case 'e':
+				global::Man->rotate(-3.0f, UP_VECTOR);
+				break;
 		}
 	}
 	else if (toolMode == TOOL_MODE::FIRST_PERSON) {

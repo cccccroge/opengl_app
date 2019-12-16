@@ -25,6 +25,25 @@ Texture::Texture(const int width, const int height) :
 	setUp();
 }
 
+// for now this texture is served as a depth map (usage is garbage)
+Texture::Texture(int usage, const int width, const int height) :
+	width(width), height(height), data(NULL), type(""), path(NULL)
+{
+	glGenTextures(1, &tbo);
+    //glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, tbo);
+
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, width, height, 0, 
+		GL_DEPTH_COMPONENT, GL_FLOAT, NULL);
+
+    glBindTexture(GL_TEXTURE_2D, 0);
+}
+
 Texture::~Texture()
 {
 	glDeleteTextures(1, &tbo);

@@ -15,7 +15,7 @@
 #define MENU_EXIT 3
 
 #define UP_VECTOR glm::vec3(0.0f, 1.0f, 0.0f)   // Y is up, consistent with OpenGL
-    // TODO: make other vectors too, and replace somewhere else code
+    // TODO: mreplace somewhere else code
 #define SCALE_SENSITIVITY 1.25f
 #define PAN_SENSITIVITY 0.05f
 #define ORBIT_SENSITIVITY 0.5f

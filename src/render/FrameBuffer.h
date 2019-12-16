@@ -12,8 +12,9 @@ public:
     FrameBuffer();
     ~FrameBuffer();
 
-    void attachTexture(Texture &tex);
+    void attachTexture(Texture &tex, const GLenum attach_type);
     void attachRenderBuffer(RenderBuffer &render_buffer);
+    void attachEmptyColorBuffer();
     bool validate();
 
     void bind();

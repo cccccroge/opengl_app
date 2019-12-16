@@ -29,7 +29,7 @@ PostEffectBuffer::PostEffectBuffer(const int width, const int height) :
     screen_mesh = new Mesh(vertices);
 
     // attach a texture buffer and render buffer
-    frame_buffer.attachTexture(screen_tex);
+    frame_buffer.attachTexture(screen_tex, GL_COLOR_ATTACHMENT0);
     frame_buffer.attachRenderBuffer(render_buffer);
     frame_buffer.validate();
 }

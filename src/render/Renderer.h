@@ -12,15 +12,17 @@ class Renderer
 public:
     Renderer();
     ~Renderer();
-    void setCamera(Camera &cam);
+    void setMainCamera(Camera &cam);
+    void setLightCamera(Camera &cam);
     void addModel(Model &model);
     void addSkybox(Skybox &skybox);
     void RenderAll();
 
-    inline Camera* getCamera() { return m_camera; }
+    inline Camera* getMainCamera() { return main_camera; }
 
 private:
-    Camera *m_camera;
+    Camera *main_camera;
+    Camera *light_camera;
     std::vector<Model *> model_vec;
     Skybox *skybox;
 };

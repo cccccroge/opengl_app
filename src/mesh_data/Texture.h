@@ -11,6 +11,7 @@ class Texture
 public:
     Texture(const char *path);
     Texture(const int width, const int height);
+    Texture(int usage, const int width, const int height);  //TODO: generalize?
     ~Texture();
 
     void setUp();
