@@ -59,9 +59,26 @@ float shadow_factor(vec4 fragPos)   // light space
     proj_coord = proj_coord * 0.5 + 0.5;
 
     // calculate shadow factor
-    float closest_depth = texture(shadowMap, proj_coord.xy).r;
     float current_depth = proj_coord.z;
-    float shadow_factor = current_depth > closest_depth ? 1.0 : 0.0;
+
+    vec3 normal_unit = normalize(blinnPhongData.normal);
+    vec3 light_dir_unit = normalize(lightPos - blinnPhongData.fragPos);
+    // we should bias less if the face is parallel to the light
+    float bias = (1 - dot(normal_unit, light_dir_unit)) * 0.0005 + 0.00005;
+
+    float shadow_factor = 0;
+    vec2 texel_size = 1.0 / textureSize(shadowMap, 0);
+    int sample_texel_len = 1;
+
+    for (int i = -sample_texel_len; i <= sample_texel_len; ++i) {
+        for (int j = -sample_texel_len; j <= sample_texel_len; ++j) {
+            float closest_depth = texture(shadowMap, 
+                proj_coord.xy + vec2(i, j) * texel_size).r;
+            shadow_factor += (current_depth - bias > closest_depth ? 0.8 : 0.0);  
+        }
+    }
+    int sample_num = 2 * sample_texel_len + 1;
+    shadow_factor /= pow(sample_num, 2);
 
     return shadow_factor;
 }
@@ -91,7 +108,6 @@ vec4 blinn_phong()
         specular * 0.65 + environment_map().xyz * 0.35) * model_color;
 
     // Add shadow
-    //vec3 mix = (1.0, 1.0, 1.0);
     vec3 result = mix * (1 - shadow_factor(shadowData.fragPos));
 
     return vec4(result, 1.0);

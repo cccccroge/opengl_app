@@ -71,7 +71,7 @@ void Renderer::RenderAll()
         }
 	}
 
-    // 2.draw all models
+    // 2-1.draw all models
     global::postEffectBuffer->bindFrameBuffer();
     glViewport(0, 0, global::renderWidth, global::renderHeight);
     glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
@@ -107,7 +107,7 @@ void Renderer::RenderAll()
         }
 	}
 
-    // 3.draw sky box: draw after all models are shown which is optimized
+    // 2-2.draw sky box: draw after all models are shown which is optimized
     glDepthMask(GL_FALSE);
 
     global::program_skybox->bind();
@@ -121,10 +121,10 @@ void Renderer::RenderAll()
 
     glDepthMask(GL_TRUE);
 
-    // 4.draw (step 1~3)'s texture on to 2D space and do post effect if needed
+    // 3.draw (step 1~2)'s texture on to 2D space and do post effect if needed
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
     glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
-    glClear(GL_COLOR_BUFFER_BIT);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glDisable(GL_DEPTH_TEST);
 
     global::program_posteffect->bind();
@@ -133,6 +133,6 @@ void Renderer::RenderAll()
     global::postEffectBuffer->bindScreen();
     glDrawArrays(GL_TRIANGLES, 0, 6);
 
-    // 5.Finish all draw calls, now flip swap buffer
+    // 4.Finish all draw calls, now flip swap buffer
     glutSwapBuffers();
 }
