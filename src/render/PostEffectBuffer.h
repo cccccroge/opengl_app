@@ -19,6 +19,7 @@ public:
     void unbindFrameBuffer();
 
     void bindScreen();
+    void bindMeshOnly();
 
 private:
     Mesh *screen_mesh;

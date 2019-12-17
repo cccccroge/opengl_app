@@ -81,7 +81,7 @@ void setupRendering()
 		std::vector<float>({ 0.1f, 1000.0f }), glm::vec3(0.0f, 0.0f, 0.0f), 
 		glm::vec3(-1.0f, -1.0f, 0.0f), 80.0f);
 	global::camLight = Camera(PROJECTION_TYPE::ORTHOGONAL,	// light camera to produce depth map
-		std::vector<float>({ 1.0f, 7.5f, -10.0f, 10.0f, -10.0f, 10.0f }), 
+		std::vector<float>({ 0.1f, 500.0f, -10.0f, 10.0f, -10.0f, 10.0f }), 
 		glm::vec3(-31.75f, 26.05f, -97.72f), glm::vec3(-10.0f, -13.0f, -8.0f), 0);
 
 	// send to renderer

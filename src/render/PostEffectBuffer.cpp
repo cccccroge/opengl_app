@@ -60,3 +60,8 @@ void PostEffectBuffer::bindScreen()
     screen_tex.bind();
 }
 
+void PostEffectBuffer::bindMeshOnly()
+{
+    screen_mesh->bind();
+}
+

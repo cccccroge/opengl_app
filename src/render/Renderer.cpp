@@ -48,6 +48,7 @@ void Renderer::RenderAll()
     /* First pass */
     // draw depth map
     global::depthMapBuffer->bind();
+ 
     glViewport(0, 0, 1024, 1024);
     glClear(GL_DEPTH_BUFFER_BIT);
 
@@ -69,51 +70,51 @@ void Renderer::RenderAll()
         }
 	}
 
-    // draw all models : need to bind depth texture too
-    global::postEffectBuffer->bindFrameBuffer();
-    glViewport(0, 0, global::renderWidth, global::renderHeight);
-    glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    glEnable(GL_DEPTH_TEST);
-	glDepthFunc(GL_LEQUAL);
+    // // draw all models : need to bind depth texture too
+    // global::postEffectBuffer->bindFrameBuffer();
+    // glViewport(0, 0, global::renderWidth, global::renderHeight);
+    // glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
+    // glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    // glEnable(GL_DEPTH_TEST);
+	// glDepthFunc(GL_LEQUAL);
 
-    global::program_model->bind();
+    // global::program_model->bind();
 
-    for (auto modelPtr : model_vec) {
-        // change uniforms in program
-        glm::mat4 model = modelPtr->getModelMat();
-        glm::mat4 view = main_camera->getViewMat();
-        glm::mat4 proj = main_camera->getProjMat();
-        glm::vec3 cameraPos = main_camera->getPos();
-        global::program_model->setUniformMat4("mvpMatrix", proj * view * model);
-        global::program_model->setUniformMat4("mMatrix", model);
-        global::program_model->setUniformVec3("viewPos", cameraPos);
+    // for (auto modelPtr : model_vec) {
+    //     // change uniforms in program
+    //     glm::mat4 model = modelPtr->getModelMat();
+    //     glm::mat4 view = main_camera->getViewMat();
+    //     glm::mat4 proj = main_camera->getProjMat();
+    //     glm::vec3 cameraPos = main_camera->getPos();
+    //     global::program_model->setUniformMat4("mvpMatrix", proj * view * model);
+    //     global::program_model->setUniformMat4("mMatrix", model);
+    //     global::program_model->setUniformVec3("viewPos", cameraPos);
 
-        // bind mesh and draw
-        for (auto meshPtr : modelPtr->getMeshes()) {
-            skybox->getTexture().bind(*global::program_model,   // use in enviroment mapping
-                "skybox", 0);
-            global::depthTex->bind(*global::program_model,    // use in shadow mapping
-                "shadowMap", 1);
-            meshPtr->bind(*global::program_model, "tex");
-	        glDrawElements(GL_TRIANGLES, meshPtr->getIndicesNum(),
-                GL_UNSIGNED_INT, 0);
-        }
-	}
+    //     // bind mesh and draw
+    //     for (auto meshPtr : modelPtr->getMeshes()) {
+    //         skybox->getTexture().bind(*global::program_model,   // use in enviroment mapping
+    //             "skybox", 0);
+    //         global::depthTex->bind(*global::program_model,    // use in shadow mapping
+    //             "shadowMap", 1);
+    //         meshPtr->bind(*global::program_model, "tex");
+	//         glDrawElements(GL_TRIANGLES, meshPtr->getIndicesNum(),
+    //             GL_UNSIGNED_INT, 0);
+    //     }
+	// }
 
-    // draw sky box
-    glDepthMask(GL_FALSE);
+    // // draw sky box
+    // glDepthMask(GL_FALSE);
 
-    global::program_skybox->bind();
-    glm::mat4 model = skybox->getModelMat();
-    glm::mat4 view = glm::mat4( // drop transformation for skybox so that it won't move
-        glm::mat3(main_camera->getViewMat()));
-    glm::mat4 proj = main_camera->getProjMat();
-    global::program_skybox->setUniformMat4("um4mvp", proj * view * model);
-    skybox->bind(*global::program_skybox, "skybox", 0);
-    glDrawArrays(GL_TRIANGLES, 0, 36);
+    // global::program_skybox->bind();
+    // glm::mat4 model = skybox->getModelMat();
+    // glm::mat4 view = glm::mat4( // drop transformation for skybox so that it won't move
+    //     glm::mat3(main_camera->getViewMat()));
+    // glm::mat4 proj = main_camera->getProjMat();
+    // global::program_skybox->setUniformMat4("um4mvp", proj * view * model);
+    // skybox->bind(*global::program_skybox, "skybox", 0);
+    // glDrawArrays(GL_TRIANGLES, 0, 36);
 
-    glDepthMask(GL_TRUE);
+    // glDepthMask(GL_TRUE);
 
 
     /* Second pass */
@@ -123,7 +124,9 @@ void Renderer::RenderAll()
     glDisable(GL_DEPTH_TEST);
 
     global::program_posteffect->bind();
-    global::postEffectBuffer->bindScreen();
+    global::depthTex->bind(*global::program_posteffect, "screenTex", 0);
+    global::postEffectBuffer->bindMeshOnly();
+    //global::postEffectBuffer->bindScreen();
     glDrawArrays(GL_TRIANGLES, 0, 6);
 
 
