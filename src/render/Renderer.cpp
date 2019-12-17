@@ -45,12 +45,13 @@ void Renderer::addSkybox(Skybox &_skybox)
 
 void Renderer::RenderAll()
 {
-    /* First pass */
-    // draw depth map
+    // 1.draw depth map
     global::depthMapBuffer->bind();
  
     glViewport(0, 0, 1024, 1024);
     glClear(GL_DEPTH_BUFFER_BIT);
+    glEnable(GL_DEPTH_TEST);
+    glDepthFunc(GL_LESS);
 
     global::program_shadow->bind();
 
@@ -70,54 +71,57 @@ void Renderer::RenderAll()
         }
 	}
 
-    // // draw all models : need to bind depth texture too
-    // global::postEffectBuffer->bindFrameBuffer();
-    // glViewport(0, 0, global::renderWidth, global::renderHeight);
-    // glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
-    // glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    // glEnable(GL_DEPTH_TEST);
-	// glDepthFunc(GL_LEQUAL);
+    // 2.draw all models
+    global::postEffectBuffer->bindFrameBuffer();
+    glViewport(0, 0, global::renderWidth, global::renderHeight);
+    glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    glEnable(GL_DEPTH_TEST);
+	glDepthFunc(GL_LEQUAL);
 
-    // global::program_model->bind();
+    global::program_model->bind();
 
-    // for (auto modelPtr : model_vec) {
-    //     // change uniforms in program
-    //     glm::mat4 model = modelPtr->getModelMat();
-    //     glm::mat4 view = main_camera->getViewMat();
-    //     glm::mat4 proj = main_camera->getProjMat();
-    //     glm::vec3 cameraPos = main_camera->getPos();
-    //     global::program_model->setUniformMat4("mvpMatrix", proj * view * model);
-    //     global::program_model->setUniformMat4("mMatrix", model);
-    //     global::program_model->setUniformVec3("viewPos", cameraPos);
+    for (auto modelPtr : model_vec) {
+        // change uniforms in program
+        glm::mat4 model = modelPtr->getModelMat();
+        glm::mat4 view = main_camera->getViewMat();
+        glm::mat4 proj = main_camera->getProjMat();
+        glm::vec3 cameraPos = main_camera->getPos();
+        glm::mat4 view_l = light_camera->getViewMat();
+        glm::mat4 proj_l = light_camera->getProjMat();
 
-    //     // bind mesh and draw
-    //     for (auto meshPtr : modelPtr->getMeshes()) {
-    //         skybox->getTexture().bind(*global::program_model,   // use in enviroment mapping
-    //             "skybox", 0);
-    //         global::depthTex->bind(*global::program_model,    // use in shadow mapping
-    //             "shadowMap", 1);
-    //         meshPtr->bind(*global::program_model, "tex");
-	//         glDrawElements(GL_TRIANGLES, meshPtr->getIndicesNum(),
-    //             GL_UNSIGNED_INT, 0);
-    //     }
-	// }
+        global::program_model->setUniformMat4("mvpMatrix", proj * view * model);
+        global::program_model->setUniformMat4("mMatrix", model);
+        global::program_model->setUniformVec3("viewPos", cameraPos);
+        global::program_model->setUniformMat4("vpMatrixLight", proj_l * view_l);
 
-    // // draw sky box
-    // glDepthMask(GL_FALSE);
+        // bind mesh and draw
+        for (auto meshPtr : modelPtr->getMeshes()) {
+            skybox->getTexture().bind(*global::program_model,   // use in enviroment mapping
+                "skybox", 0);
+            global::depthTex->bind(*global::program_model,    // use in shadow mapping
+                "shadowMap", 1);
+            meshPtr->bind(*global::program_model, "tex");
+	        glDrawElements(GL_TRIANGLES, meshPtr->getIndicesNum(),
+                GL_UNSIGNED_INT, 0);
+        }
+	}
 
-    // global::program_skybox->bind();
-    // glm::mat4 model = skybox->getModelMat();
-    // glm::mat4 view = glm::mat4( // drop transformation for skybox so that it won't move
-    //     glm::mat3(main_camera->getViewMat()));
-    // glm::mat4 proj = main_camera->getProjMat();
-    // global::program_skybox->setUniformMat4("um4mvp", proj * view * model);
-    // skybox->bind(*global::program_skybox, "skybox", 0);
-    // glDrawArrays(GL_TRIANGLES, 0, 36);
+    // 3.draw sky box: draw after all models are shown which is optimized
+    glDepthMask(GL_FALSE);
 
-    // glDepthMask(GL_TRUE);
+    global::program_skybox->bind();
+    glm::mat4 model = skybox->getModelMat();
+    glm::mat4 view = glm::mat4( // drop transformation for skybox so that it won't move
+        glm::mat3(main_camera->getViewMat()));
+    glm::mat4 proj = main_camera->getProjMat();
+    global::program_skybox->setUniformMat4("um4mvp", proj * view * model);
+    skybox->bind(*global::program_skybox, "skybox", 0);
+    glDrawArrays(GL_TRIANGLES, 0, 36);
 
+    glDepthMask(GL_TRUE);
 
-    /* Second pass */
+    // 4.draw (step 1~3)'s texture on to 2D space and do post effect if needed
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
     glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT);
@@ -125,12 +129,10 @@ void Renderer::RenderAll()
 
     global::program_posteffect->bind();
     global::depthTex->bind(*global::program_posteffect, "screenTex", 0);
-    global::postEffectBuffer->bindMeshOnly();
-    //global::postEffectBuffer->bindScreen();
+    //global::postEffectBuffer->bindMeshOnly();
+    global::postEffectBuffer->bindScreen();
     glDrawArrays(GL_TRIANGLES, 0, 6);
 
-
-    /* Finish all draw calls, now flip swap buffer */
+    // 5.Finish all draw calls, now flip swap buffer
     glutSwapBuffers();
-	//printGLError();
 }

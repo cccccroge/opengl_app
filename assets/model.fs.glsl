@@ -2,7 +2,7 @@
 
 in VertexData
 {
-    vec3 vertex;
+    vec3 position;
     vec3 normal;
     vec2 texCoord;
 
@@ -91,6 +91,7 @@ vec4 blinn_phong()
         specular * 0.65 + environment_map().xyz * 0.35) * model_color;
 
     // Add shadow
+    //vec3 mix = (1.0, 1.0, 1.0);
     vec3 result = mix * (1 - shadow_factor(shadowData.fragPos));
 
     return vec4(result, 1.0);

@@ -61,7 +61,7 @@ void setupRendering()
 	// setup models
 	//global::Palace = new Model("assets/myman/myMan.obj");
 	//global::Palace = new Model("assets/lost_empire/lost_empire.obj");
-	global::Man = new Model("assets/hisman/nanosuit.obj");
+	global::Man = new Model("assets/hisman/ball.obj");
 	global::Man->translate(-10.0f, -13.0f, -8.0f);
 	global::Man->scale(0.5f, 0.35f, 0.5f);
 
