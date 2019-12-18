@@ -1,8 +1,8 @@
 #pragma once
 
 #include "SceneObject.h"
-#include "GLM/glm_996/mat4x4.hpp"
-#include "GLM/glm_996/trigonometric.hpp"
+#include "GLM/mat4x4.hpp"
+#include "GLM/trigonometric.hpp"
 #include <vector>
 
 
@@ -40,8 +40,8 @@ private:
     float fov;  // rads
 
     // means near/far in PERSPECTIVE, or zNear/zFar in ORTHOGONAL
-    float near;
-    float far;
+    float zNear;
+    float zFar;
 
     // used in ORTHOGONAL
     float left;

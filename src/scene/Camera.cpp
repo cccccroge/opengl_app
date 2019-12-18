@@ -1,9 +1,9 @@
 #include "Camera.h"
 #include "../init.h"
 
-#include "GLM/glm_996/ext/matrix_transform.hpp"
-#include "GLM/glm_996/ext/matrix_clip_space.hpp"
-#include "GLM/glm_996/gtx/projection.hpp"
+#include "GLM/ext/matrix_transform.hpp"
+#include "GLM/ext/matrix_clip_space.hpp"
+#include "GLM/gtx/projection.hpp"
 #include "../global.h"
 #include <iostream>
 
@@ -17,7 +17,7 @@ Camera::Camera() : SceneObject(glm::vec3(0.0f, 0.0f, 0.0f))
 Camera::Camera(PROJECTION_TYPE type, std::vector<float> boundary, 
     glm::vec3 position, glm::vec3 lookPos, float fov) :
         proj_type(type), lookPosObj(), rightDirObj(), upDirObj(), 
-        fov(glm::radians(fov)), near(boundary[0]), far(boundary[1]), 
+        fov(glm::radians(fov)), zNear(boundary[0]), zFar(boundary[1]), 
         SceneObject()
 {
     if (proj_type == PROJECTION_TYPE::ORTHOGONAL) {
@@ -150,10 +150,10 @@ glm::mat4 Camera::getProjMat()
 {
     if (proj_type == PROJECTION_TYPE::PERSPECTIVE) {
         float ratio = global::renderWidth / global::renderHeight;
-        return glm::perspective(fov, ratio, near, far);
+        return glm::perspective(fov, ratio, zNear, zFar);
     }
     else if (proj_type == PROJECTION_TYPE::ORTHOGONAL) {
-        return glm::ortho(left, right, bottom, top, near, far);
+        return glm::ortho(left, right, bottom, top, zNear, zFar);
     }
     else {
         std::cout << "Can't generate correct projection matrix" << std::endl;

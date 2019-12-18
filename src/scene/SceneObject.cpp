@@ -1,6 +1,6 @@
 #include "SceneObject.h"
-#include "GLM/glm_996/ext/matrix_transform.hpp"
-#include "GLM/glm_996/geometric.hpp"
+#include "GLM/ext/matrix_transform.hpp"
+#include "GLM/geometric.hpp"
 
 
 SceneObject::SceneObject(glm::vec3 pos/* = glm::vec3(0.0f, 0.0f, 0.0f)*/) : 

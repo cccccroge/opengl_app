@@ -1,6 +1,6 @@
 #include "ShaderProgram.h"
 #include <iostream>
-#include "GLM/glm_996/gtc/type_ptr.hpp"
+#include "GLM/gtc/type_ptr.hpp"
 #include "../utils.h"
 
 ShaderProgram::ShaderProgram()
@@ -37,7 +37,7 @@ bool ShaderProgram::compile()
     {
         GLsizei length;
         glGetProgramiv(id, GL_INFO_LOG_LENGTH, &length);
-        GLchar info[length];
+        GLchar info[80];
         glGetProgramInfoLog(id, length, nullptr, info);
         
         std::cout << "Failed to link program:" << std::endl;

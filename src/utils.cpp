@@ -1,15 +1,16 @@
 #include "utils.h"
 #include <iostream>
 #include "freeGLUT/freeglut.h"
-#include "GLM/glm_996/glm.hpp"
+#include "GLM/glm.hpp"
 #include <string>
 #include <sstream>
 #include <cmath>
 #include <fstream>
 #include <algorithm>
 #include <cstdio>
-#include <unistd.h>
+//#include <unistd.h>
 #include "global.h"
+
 
 
 // Print OpenGL context related information.

@@ -1,7 +1,7 @@
 #pragma once
 
 #include "GLEW/glew.h"
-#include "GLM/glm_996/vec3.hpp"
+#include "GLM/vec3.hpp"
 #include "TinyOBJ/tiny_obj_loader.h"
 #include "../render/ShaderProgram.h"
 #include "SceneObject.h"

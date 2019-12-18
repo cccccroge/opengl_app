@@ -3,9 +3,9 @@
 #include "../init.h"
 #include "freeGLUT/freeglut.h"
 
-#include "GLM/glm_996/vec3.hpp"
-#include "GLM/glm_996/ext/matrix_transform.hpp"
-#include "GLM/glm_996/gtc/type_ptr.hpp"
+#include "GLM/vec3.hpp"
+#include "GLM/ext/matrix_transform.hpp"
+#include "GLM/gtc/type_ptr.hpp"
 
 #include <iostream>
 #include <map>

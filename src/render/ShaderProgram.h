@@ -2,7 +2,7 @@
 
 #include "GLEW/glew.h"
 #include "Shader.h"
-#include "GLM/glm_996/mat4x4.hpp"
+#include "GLM/mat4x4.hpp"
 
 
 class ShaderProgram

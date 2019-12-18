@@ -1,0 +1,7 @@
+glew 2.1.0
+freeglut 3.2.1
+glm 0.9.9.6
+assimp 3.3.1
+
+stb 2.23
+tinyobj ??

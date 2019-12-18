@@ -1,7 +1,7 @@
 #include "GLEW/glew.h"
 #include "freeGLUT/freeglut.h"
 
-#include "GLM/glm_996/vec3.hpp"
+#include "GLM/vec3.hpp"
 
 #include "global.h"
 #include "utils.h"

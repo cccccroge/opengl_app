@@ -1,6 +1,6 @@
 #pragma once
 
-#include "GLM/glm_996/mat4x4.hpp"
+#include "GLM/mat4x4.hpp"
 #include "GLEW/glew.h"
 #include <vector>
 

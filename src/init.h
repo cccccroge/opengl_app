@@ -1,7 +1,7 @@
 #pragma once
 
 #include "freeGLUT/freeglut.h"
-#include "GLM/glm_996/vec3.hpp"
+#include "GLM/vec3.hpp"
 
 #define CONTEXT_VER_MAJOR 4
 #define CONTEXT_VER_MINOR 2

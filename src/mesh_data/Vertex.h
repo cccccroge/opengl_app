@@ -1,7 +1,7 @@
 #pragma once
 
-#include "GLM/glm_996/vec3.hpp"
-#include "GLM/glm_996/vec2.hpp"
+#include "GLM/vec3.hpp"
+#include "GLM/vec2.hpp"
 
 // TODO: how to bind with layout together?
 class VertexPNT

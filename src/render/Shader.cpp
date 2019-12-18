@@ -36,7 +36,7 @@ bool Shader::validate()
 
         GLint length;
         glGetShaderiv(id, GL_INFO_LOG_LENGTH, &length);
-        GLchar info[length];
+        GLchar info[80];
         glGetShaderInfoLog(id, length, nullptr, info);
 
         std::cout << "Failed to compile shader:" << std::endl;
